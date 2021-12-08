@@ -1,5 +1,6 @@
 package com.github.gcnyin.blog
 
+import cats.implicits._
 import cats.data.EitherT
 import com.github.gcnyin.blog.Model._
 import reactivemongo.api.bson.{BSONDocumentReader, document}
@@ -23,7 +24,7 @@ class ServiceLogic(mongoClient: MongoClient, jwtComponent: JwtComponent)(implici
         coll
           .find(document("username" -> username))
           .one[UserWithoutPassword]
-          .map(optionToEither)
+          .map(_.toRight(Message(s"username $username not found")))
       )
     } yield user
   }.value
@@ -58,21 +59,15 @@ class ServiceLogic(mongoClient: MongoClient, jwtComponent: JwtComponent)(implici
       )
     } yield Right(Message("Post saved successfully"))
 
-  private def optionToEither[F](o: Option[F]): Either[Message, F] =
-    o match {
-      case Some(value) => Right(value)
-      case None        => Left(Message("element not found"))
-    }
-
-  private def verifyPassword(userOption: Option[User], up: UsernamePassword): Either[Message, String] =
-    userOption match {
-      case Some(user) =>
-        up.password match {
-          case Some(rawPassword) =>
-            if (passwordEncoder.matches(rawPassword, user.password)) Right(user.username)
-            else Left(Message("password doesn't match"))
-          case None => Left(Message("password missing"))
-        }
-      case None => Left(Message(s"user ${up.username} not found"))
-    }
+  private def verifyPassword(
+      ou: Option[User],
+      up: UsernamePassword
+  ): Either[Message, String] =
+    for {
+      user <- ou.toRight(Message(s"user ${up.username} not found"))
+      rawPassword <- up.password.toRight(Message("password missing"))
+      username <-
+        if (passwordEncoder.matches(rawPassword, user.password)) Right(user.username)
+        else Left(Message("password doesn't match"))
+    } yield username
 }

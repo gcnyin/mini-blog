@@ -6,5 +6,5 @@ db.posts.createIndex({ created: 1 })
 db.users.drop()
 db.users.insertOne({
     username: "admin",
-    password: "$2a$10$sCSIQlBN4sKSlm3PMA5ImOOKdpJYXfWh4sx8/sLpM7ZsdMeNzF382"
+    password: "$2a$10$5qkPDsprnlyUsAI.FjhkiucYFkW7fUfGRFDmkmvUKpQuR0gJLdyMq"
 })
