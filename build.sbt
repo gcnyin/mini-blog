@@ -10,16 +10,26 @@ lazy val root = (project in file("."))
   .settings(
     name := "blog",
     libraryDependencies ++= Seq(
+      // http
       "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server" % tapirVersion,
       "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % tapirVersion,
+      "io.circe" %% "circe-generic" % "0.14.1",
+      "de.heikoseeberger" %% "akka-http-circe" % "1.38.2",
       "com.typesafe.akka" %% "akka-http" % "10.2.7",
+      // akka
       "com.typesafe.akka" %% "akka-stream" % akkaVersion,
       "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
+      // security
+      "org.springframework.security" % "spring-security-crypto" % "5.6.0",
+      "com.github.jwt-scala" %% "jwt-circe" % "9.0.2",
+      // database
       "org.reactivemongo" %% "reactivemongo" % "1.0.7",
-      "io.circe" %% "circe-generic" % "0.14.1",
+      // logging
       "ch.qos.logback" % "logback-classic" % "1.2.7",
-      "de.heikoseeberger" %% "akka-http-circe" % "1.38.2",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
+      "commons-logging" % "commons-logging" % "1.2",
+      // test
+      "org.scalatest" %% "scalatest" % "3.2.10" % Test,
     )
   )
   .enablePlugins(JavaAppPackaging)

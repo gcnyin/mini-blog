@@ -5,6 +5,7 @@ import akka.actor.typed.{ActorSystem, Behavior}
 import akka.http.scaladsl.Http
 import com.typesafe.scalalogging.Logger
 
+import java.time.Instant
 import scala.concurrent.ExecutionContextExecutor
 import scala.util.{Failure, Success}
 
@@ -31,7 +32,7 @@ object Main {
 
     val port = System.getProperty("http.port", "8080").toInt
     val mongoClient = new MongoClient()
-    val serviceLogic = new ServiceLogic(mongoClient)
+    val serviceLogic = new ServiceLogic(mongoClient, new JwtComponent("!OD%0RWT01Fkq!", Instant.now))
     val controller = new Controller(serviceLogic)
 
     Http()
