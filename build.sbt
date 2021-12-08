@@ -22,3 +22,4 @@ lazy val root = (project in file("."))
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
     )
   )
+  .enablePlugins(JavaAppPackaging)
