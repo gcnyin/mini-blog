@@ -1,6 +1,7 @@
 package com.github.gcnyin.blog
 
-import reactivemongo.api.bson.{BSONDocumentHandler, Macros}
+import reactivemongo.api.bson.Macros.Annotations.{Key, Reader}
+import reactivemongo.api.bson.{BSONDocumentHandler, BSONObjectID, BSONReader, Macros}
 
 object Model {
   case class Message(msg: String)
@@ -14,12 +15,16 @@ object Model {
   implicit val userWithoutPasswordHandler: BSONDocumentHandler[UserWithoutPassword] =
     Macros.handler[UserWithoutPassword]
 
-  case class Post(title: String, content: String, created: Long)
+  val idReader: BSONReader[String] = BSONReader.collect[String] { case id @ BSONObjectID(_) =>
+    id.asInstanceOf[BSONObjectID].stringify
+  }
+
+  case class Post(@Reader(idReader) @Key("_id") id: String, title: String, content: String, created: Long)
 
   implicit val postHandler: BSONDocumentHandler[Post] =
     Macros.handler[Post]
 
-  case class PostWithoutContent(title: String, created: Long)
+  case class PostWithoutContent(@Reader(idReader) @Key("_id") id: String, title: String, created: Long)
 
   implicit val postWithoutContentHandler: BSONDocumentHandler[PostWithoutContent] =
     Macros.handler[PostWithoutContent]

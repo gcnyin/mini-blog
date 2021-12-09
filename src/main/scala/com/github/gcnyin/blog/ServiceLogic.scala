@@ -1,17 +1,21 @@
 package com.github.gcnyin.blog
 
-import cats.implicits._
+import akka.actor.typed.ActorSystem
 import cats.data.EitherT
+import cats.implicits._
 import com.github.gcnyin.blog.Model._
-import reactivemongo.api.bson.{BSONDocumentReader, document}
-
-import scala.concurrent.{ExecutionContextExecutor, Future}
-import sttp.tapir.model.UsernamePassword
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import reactivemongo.api.bson.document
+import sttp.tapir.model.UsernamePassword
 
-class ServiceLogic(mongoClient: MongoClient, jwtComponent: JwtComponent)(implicit val ec: ExecutionContextExecutor) {
+import java.time.Instant
+import scala.concurrent.{ExecutionContextExecutor, Future}
+
+class ServiceLogic(mongoClient: MongoClient)(implicit val ec: ExecutionContextExecutor, system: ActorSystem[_]) {
   private val passwordEncoder: PasswordEncoder = new BCryptPasswordEncoder()
+  private val key = system.settings.config.getString("jwt.key")
+  private val jwtComponent: JwtComponent = new JwtComponent(key, Instant.now)
 
   def createToken(username: String): Future[Either[Message, Token]] =
     Future.successful(Right(Token(jwtComponent.createToken(username))))

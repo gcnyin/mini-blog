@@ -3,9 +3,9 @@ package com.github.gcnyin.blog
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorSystem, Behavior}
 import akka.http.scaladsl.Http
+import com.softwaremill.macwire.wire
 import com.typesafe.scalalogging.Logger
 
-import java.time.Instant
 import scala.concurrent.ExecutionContextExecutor
 import scala.util.{Failure, Success}
 
@@ -31,13 +31,14 @@ object Main {
     implicit val context: ExecutionContextExecutor = system.executionContext
 
     val port = System.getProperty("http.port", "8080").toInt
-    val mongoClient = new MongoClient()
-    val serviceLogic = new ServiceLogic(mongoClient, new JwtComponent("!OD%0RWT01Fkq!", Instant.now))
-    val controller = new Controller(serviceLogic)
+
+    lazy val mc = wire[MongoClient]
+    lazy val sl = wire[ServiceLogic]
+    lazy val c = wire[Controller]
 
     Http()
       .newServerAt("0.0.0.0", port)
-      .bindFlow(controller.route)
+      .bindFlow(c.route)
       .onComplete {
         case Failure(exception) =>
           logger.error("Failed to start server", exception)

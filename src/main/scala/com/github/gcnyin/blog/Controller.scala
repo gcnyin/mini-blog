@@ -3,10 +3,12 @@ package com.github.gcnyin.blog
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import com.github.gcnyin.blog.TapirEndpoint._
+import sttp.tapir._
+import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.server.akkahttp.AkkaHttpServerInterpreter
+import sttp.tapir.swagger.bundle.SwaggerInterpreter
+
 import scala.concurrent.Future
-import sttp.tapir.model.UsernamePassword
-import sttp.tapir.server.PartialServerEndpoint
 
 class Controller(serviceLogic: ServiceLogic) {
   private val posts: Route =
@@ -27,5 +29,12 @@ class Controller(serviceLogic: ServiceLogic) {
         .serverLogic(username => _ => serviceLogic.createToken(username))
     )
 
-  val route: Route = posts ~ createPost ~ createToken
+  private val apiList: List[AnyEndpoint] = List(postsEndpoint, createPostEndpoint, createTokenEndpoint)
+
+  private val swaggerRoute: List[ServerEndpoint[Any, Future]] =
+    SwaggerInterpreter().fromEndpoints[Future](apiList, "Blog", "1.0")
+
+  private val openApi: Route = AkkaHttpServerInterpreter().toRoute(swaggerRoute)
+
+  val route: Route = openApi ~ posts ~ createPost ~ createToken
 }

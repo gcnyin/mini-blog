@@ -6,7 +6,6 @@ import sttp.tapir._
 import sttp.tapir.generic.auto._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.model.UsernamePassword
-import reactivemongo.api.bson.BSONString
 
 object TapirEndpoint {
   private val messageBody: EndpointIO.Body[String, Message] =
@@ -17,7 +16,7 @@ object TapirEndpoint {
   private val postWithoutContentSeqBody: EndpointIO.Body[String, Seq[PostWithoutContent]] =
     jsonBody[Seq[PostWithoutContent]]
       .description("Post without content")
-      .example(Seq(PostWithoutContent("title", System.currentTimeMillis())))
+      .example(Seq(PostWithoutContent("61b0d8183b6a98374bc4059d", "title", System.currentTimeMillis())))
 
   private val postWithoutCreatedBody: EndpointIO.Body[String, PostWithoutCreated] =
     jsonBody[PostWithoutCreated]

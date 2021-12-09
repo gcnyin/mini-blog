@@ -32,3 +32,19 @@ sbt clean stage
 ```
 
 Default username and password: `admin:123456`.
+
+## OpenApi
+
+http://localhost:8080/docs/index.html?url=/docs/docs.yaml
+
+## Test
+
+```
+sbt test coverageReport
+```
+
+Publish coverage report to <https://coveralls.io/>.
+
+```
+sbt coveralls
+```
