@@ -1,5 +1,7 @@
 # mini-blog
 
+[![Coverage Status](https://coveralls.io/repos/github/gcnyin/mini-blog/badge.svg?branch=master)](https://coveralls.io/github/gcnyin/mini-blog?branch=master)
+
 Powered by Akka, Tapir and MongoDB.
 
 ## Requirements
