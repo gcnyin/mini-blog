@@ -17,8 +17,7 @@ class Controller(serviceLogic: ServiceLogic) {
     ValuedEndpointOutput(messageBody, Message(msg))
 
   private val serverOptions: AkkaHttpServerOptions =
-    AkkaHttpServerOptions
-      .customInterceptors
+    AkkaHttpServerOptions.customInterceptors
       .errorOutput(failureResponse)
       .options
 
@@ -34,18 +33,14 @@ class Controller(serviceLogic: ServiceLogic) {
     AkkaHttpServerInterpreter(serverOptions).toRoute(
       createPostEndpoint
         .serverSecurityLogic(serviceLogic.verifyToken)
-        .serverLogic(userWithoutPassword => post =>
-          serviceLogic.savePostWithoutCreated(userWithoutPassword, post)
-        )
+        .serverLogic(userWithoutPassword => post => serviceLogic.savePostWithoutCreated(userWithoutPassword, post))
     )
 
   private val createToken: Route =
     AkkaHttpServerInterpreter(serverOptions).toRoute(
       createTokenEndpoint
         .serverSecurityLogic(serviceLogic.verifyUsernamePassword)
-        .serverLogic(username => _ =>
-          serviceLogic.createToken(username)
-        )
+        .serverLogic(username => _ => serviceLogic.createToken(username))
     )
 
   private val apiList: List[AnyEndpoint] =

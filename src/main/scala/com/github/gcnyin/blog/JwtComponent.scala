@@ -21,5 +21,6 @@ class JwtComponent(key: String, currentTime: => Instant) {
     JwtCirce
       .decodeAll(token, key, Seq(JwtAlgorithm.HS256))
       .toOption
-      .flatMap(_._2.subject).toRight(Model.Message("invalid token"))
+      .flatMap(_._2.subject)
+      .toRight(Model.Message("invalid token"))
 }

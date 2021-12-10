@@ -37,6 +37,8 @@ lazy val root = (project in file("."))
       "commons-logging" % "commons-logging" % "1.2",
       // test
       "org.scalatest" %% "scalatest" % "3.2.10" % Test,
+      "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
+      "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test,
     ),
     coverageEnabled := true,
   )

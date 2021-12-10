@@ -33,6 +33,8 @@ object Main {
     val port = System.getProperty("http.port", "8080").toInt
 
     lazy val mc = wire[MongoClient]
+    lazy val userRepo = wire[UserRepository.Impl]
+    lazy val postRepo = wire[PostRepository.Impl]
     lazy val sl = wire[ServiceLogic]
     lazy val c = wire[Controller]
 
