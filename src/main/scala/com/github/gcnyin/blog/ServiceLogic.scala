@@ -12,6 +12,7 @@ import sttp.tapir.model.UsernamePassword
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.util.{Failure, Success}
 
 class ServiceLogic(mongoClient: MongoClient)(implicit val ec: ExecutionContextExecutor, system: ActorSystem[_]) {
   private val logger: Logger = Logger[ServiceLogic]
@@ -83,6 +84,12 @@ class ServiceLogic(mongoClient: MongoClient)(implicit val ec: ExecutionContextEx
         )
       )
     } yield Right(Message("Post saved successfully"))
+
+  def handlerErrors[T](f: Future[T]):Future[Either[Message, T]] =
+    f.transform {
+      case Failure(exception) => Success(Left(Message(exception.getMessage)))
+      case Success(value) => Success(Right(value))
+    }
 
   private def verifyPassword(
       ou: Option[User],

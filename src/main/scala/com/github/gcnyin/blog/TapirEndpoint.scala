@@ -8,7 +8,7 @@ import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.model.UsernamePassword
 
 object TapirEndpoint {
-  private val messageBody: EndpointIO.Body[String, Message] =
+  val messageBody: EndpointIO.Body[String, Message] =
     jsonBody[Message]
       .description("Something happen")
       .example(Message("Post saved successfully"))
