@@ -21,15 +21,13 @@ class ServiceLogic(mongoClient: MongoClient)(implicit val ec: ExecutionContextEx
   private val jwtComponent: JwtComponent = new JwtComponent(key, Instant.now)
 
   def getPostById(postId: String): Future[Either[Message, Post]] = {
-    logger.info("postId: {}", postId)
     for {
       coll <- EitherT.liftF(mongoClient.postsCollectionFuture)
       id <- EitherT.fromEither[Future](
         BSONObjectID
           .parse(postId)
-          .toEither
-          .left
-          .map(t => Message("invalid post id"))
+          .toOption
+          .toRight(Message(s"invalid post id: $postId"))
       )
       post <- EitherT(
         coll
