@@ -21,8 +21,7 @@ object Model {
 
   case class Post(@Reader(idReader) @Key("_id") id: String, title: String, content: String, created: Long)
 
-  implicit val postHandler: BSONDocumentHandler[Post] =
-    Macros.handler[Post]
+  implicit val postHandler: BSONDocumentHandler[Post] = Macros.handler[Post]
 
   case class PostWithoutContent(@Reader(idReader) @Key("_id") id: String, title: String, created: Long)
 

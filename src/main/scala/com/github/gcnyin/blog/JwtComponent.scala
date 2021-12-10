@@ -17,14 +17,9 @@ class JwtComponent(key: String, currentTime: => Instant) {
     JwtCirce.encode(claim, key, algo)
   }
 
-  def parseToken(token: String): Either[Model.Message, String] = {
-    val option = JwtCirce
+  def parseToken(token: String): Either[Model.Message, String] =
+    JwtCirce
       .decodeAll(token, key, Seq(JwtAlgorithm.HS256))
       .toOption
-      .flatMap(_._2.subject)
-    option match {
-      case Some(value) => Right(value)
-      case None        => Left(Model.Message("invalid token"))
-    }
-  }
+      .flatMap(_._2.subject).toRight(Model.Message("invalid token"))
 }

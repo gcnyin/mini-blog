@@ -4,18 +4,41 @@ import akka.actor.typed.ActorSystem
 import cats.data.EitherT
 import cats.implicits._
 import com.github.gcnyin.blog.Model._
+import com.typesafe.scalalogging.Logger
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import reactivemongo.api.bson.document
+import reactivemongo.api.bson.{BSONObjectID, document}
 import sttp.tapir.model.UsernamePassword
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
 class ServiceLogic(mongoClient: MongoClient)(implicit val ec: ExecutionContextExecutor, system: ActorSystem[_]) {
+  private val logger: Logger = Logger[ServiceLogic]
+
   private val passwordEncoder: PasswordEncoder = new BCryptPasswordEncoder()
   private val key = system.settings.config.getString("jwt.key")
   private val jwtComponent: JwtComponent = new JwtComponent(key, Instant.now)
+
+  def getPostById(postId: String): Future[Either[Message, Post]] = {
+    logger.info("postId: {}", postId)
+    for {
+      coll <- EitherT.liftF(mongoClient.postsCollectionFuture)
+      id <- EitherT.fromEither[Future](
+        BSONObjectID
+          .parse(postId)
+          .toEither
+          .left
+          .map(t => Message("invalid post id"))
+      )
+      post <- EitherT(
+        coll
+          .find(document("_id" -> id))
+          .one[Post]
+          .map(_.toRight(Message(s"post $postId not found")))
+      )
+    } yield post
+  }.value
 
   def createToken(username: String): Future[Either[Message, Token]] =
     Future.successful(Right(Token(jwtComponent.createToken(username))))

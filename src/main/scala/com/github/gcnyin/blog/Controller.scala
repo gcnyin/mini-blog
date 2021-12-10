@@ -15,6 +15,9 @@ class Controller(serviceLogic: ServiceLogic) {
     AkkaHttpServerInterpreter()
       .toRoute(postsEndpoint.serverLogic(_ => serviceLogic.getPostsWithoutContent))
 
+  private val post: Route = AkkaHttpServerInterpreter()
+    .toRoute(postEndpoint.serverLogic(serviceLogic.getPostById))
+
   private val createPost: Route =
     AkkaHttpServerInterpreter().toRoute(
       createPostEndpoint
@@ -29,12 +32,12 @@ class Controller(serviceLogic: ServiceLogic) {
         .serverLogic(username => _ => serviceLogic.createToken(username))
     )
 
-  private val apiList: List[AnyEndpoint] = List(postsEndpoint, createPostEndpoint, createTokenEndpoint)
+  private val apiList: List[AnyEndpoint] = List(postsEndpoint, postEndpoint, createPostEndpoint, createTokenEndpoint)
 
   private val swaggerRoute: List[ServerEndpoint[Any, Future]] =
     SwaggerInterpreter().fromEndpoints[Future](apiList, "Blog", "1.0")
 
   private val openApi: Route = AkkaHttpServerInterpreter().toRoute(swaggerRoute)
 
-  val route: Route = openApi ~ posts ~ createPost ~ createToken
+  val route: Route = openApi ~ posts ~ post ~ createPost ~ createToken
 }

@@ -13,6 +13,11 @@ object TapirEndpoint {
       .description("Something happen")
       .example(Message("Post saved successfully"))
 
+  private val postBody =
+    jsonBody[Post]
+      .description("Post")
+      .example(Post("61b0d8183b6a98374bc4059d", "title", "content", System.currentTimeMillis()))
+
   private val postWithoutContentSeqBody: EndpointIO.Body[String, Seq[PostWithoutContent]] =
     jsonBody[Seq[PostWithoutContent]]
       .description("Post without content")
@@ -52,6 +57,13 @@ object TapirEndpoint {
       .description("posts")
       .get
       .out(postWithoutContentSeqBody)
+
+  val postEndpoint: Endpoint[Unit, String, Message, Post, Any] =
+    basicEndpoint
+      .in("posts" / path[String]("postId"))
+      .description("post")
+      .get
+      .out(postBody)
 
   val createPostEndpoint: Endpoint[String, PostWithoutCreated, Message, Message, Any] =
     jwtAuthEndpoint
