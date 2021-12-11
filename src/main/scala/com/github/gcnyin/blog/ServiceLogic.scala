@@ -40,8 +40,7 @@ class ServiceLogic(userRepository: UserRepository, postRepository: PostRepositor
     } yield verifyPassword(user, usernamePassword)
 
   def getPostsWithoutContent: Future[Either[Message, Seq[PostWithoutContent]]] =
-    postRepository
-      .getPostsWithoutContent()
+    postRepository.getPostsWithoutContent
       .map(posts => Right(posts.sortBy(_.created).reverse))
 
   def savePostWithoutCreated(
@@ -49,6 +48,9 @@ class ServiceLogic(userRepository: UserRepository, postRepository: PostRepositor
       post: PostWithoutCreated
   ): Future[Either[Message, Message]] =
     postRepository.savePostWithoutCreated(post)
+
+  def updatePost(postId: String, post: PostUpdateBody): Future[Either[Message, Message]] =
+    postRepository.updatePost(postId, post)
 
   private def verifyPassword(
       ou: Option[User],

@@ -2,7 +2,7 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/gcnyin/mini-blog/badge.svg?branch=master)](https://coveralls.io/github/gcnyin/mini-blog?branch=master)
 
-Powered by Akka, Tapir and MongoDB.
+Personal blog system powered by Akka, Tapir and MongoDB.
 
 ## Requirements
 
@@ -33,10 +33,6 @@ sbt clean stage
 
 Default username and password: `admin:123456`.
 
-## OpenApi
-
-http://localhost:8080/docs/index.html?url=/docs/docs.yaml
-
 ## Test
 
 ```
@@ -48,3 +44,7 @@ Publish coverage report to <https://coveralls.io/>.
 ```
 sbt coveralls
 ```
+
+## OpenApi
+
+http://localhost:8080/docs/index.html?url=/docs/docs.yaml

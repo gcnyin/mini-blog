@@ -4,13 +4,13 @@ import reactivemongo.api.bson.Macros.Annotations.{Key, Reader}
 import reactivemongo.api.bson.{BSONDocumentHandler, BSONObjectID, BSONReader, Macros}
 
 object Model {
-  case class Message(msg: String)
+  final case class Message(msg: String)
 
-  case class User(username: String, password: String)
+  final case class User(username: String, password: String)
 
   implicit val userHandler: BSONDocumentHandler[User] = Macros.handler[User]
 
-  case class UserWithoutPassword(username: String)
+  final case class UserWithoutPassword(username: String)
 
   implicit val userWithoutPasswordHandler: BSONDocumentHandler[UserWithoutPassword] =
     Macros.handler[UserWithoutPassword]
@@ -19,21 +19,23 @@ object Model {
     id.asInstanceOf[BSONObjectID].stringify
   }
 
-  case class Post(@Reader(idReader) @Key("_id") id: String, title: String, content: String, created: Long)
+  final case class Post(@Reader(idReader) @Key("_id") id: String, title: String, content: String, created: Long)
 
   implicit val postHandler: BSONDocumentHandler[Post] = Macros.handler[Post]
 
-  case class PostWithoutContent(@Reader(idReader) @Key("_id") id: String, title: String, created: Long)
+  final case class PostWithoutContent(@Reader(idReader) @Key("_id") id: String, title: String, created: Long)
 
   implicit val postWithoutContentHandler: BSONDocumentHandler[PostWithoutContent] =
     Macros.handler[PostWithoutContent]
 
-  case class PostWithoutCreated(title: String, content: String)
+  final case class PostUpdateBody(postId: String, title: String, content: String)
+
+  final case class PostWithoutCreated(title: String, content: String)
 
   implicit val postWithoutCreatedHandler: BSONDocumentHandler[PostWithoutCreated] =
     Macros.handler[PostWithoutCreated]
 
-  case class Token(token: String)
+  final case class Token(token: String)
 
   implicit val tokenHandler: BSONDocumentHandler[Token] =
     Macros.handler[Token]

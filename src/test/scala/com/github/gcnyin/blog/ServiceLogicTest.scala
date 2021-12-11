@@ -23,7 +23,7 @@ class ServiceLogicTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll 
 
   override protected def afterAll(): Unit = testKit.shutdownTestKit()
 
-  it should "verifyToken return Right if token is valid" in {
+  it should "verify the token successfully if it's valid" in {
     lazy val userRepository = mock[UserRepository]
     when(userRepository.getUserByUsername("tom"))
       .thenReturn(Future.successful(Option(Model.User("tom", "123456"))))
@@ -43,7 +43,7 @@ class ServiceLogicTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll 
     }
   }
 
-  it should "verifyToken return Left if username in token is valid" in {
+  it should "verify the token failed if the username in the token doesn't exist" in {
     lazy val userRepository = mock[UserRepository]
     when(userRepository.getUserByUsername("tom"))
       .thenReturn(Future.successful(Option.empty))
@@ -60,7 +60,7 @@ class ServiceLogicTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll 
     }
   }
 
-  it should "verifyUsernamePassword successfully if password is correct" in {
+  it should "verify the username and password successfully if the password is correct" in {
     val encoder = new BCryptPasswordEncoder()
     val rawPassword = "123456"
     val password = encoder.encode(rawPassword)
@@ -79,6 +79,26 @@ class ServiceLogicTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll 
       e.map { p =>
         encoder.matches(rawPassword, p) should be(true)
       }
+    }
+  }
+
+  it should "verify the username and password failed if the password is wrong" in {
+    val encoder = new BCryptPasswordEncoder()
+    val rawPassword = "123456"
+    val password = encoder.encode(rawPassword)
+    val username = "tom"
+    lazy val userRepository = mock[UserRepository]
+    when(userRepository.getUserByUsername("tom"))
+      .thenReturn(Future.successful(Option(User(username, password))))
+    lazy val postRepository = mock[PostRepository]
+    lazy val serviceLogic: ServiceLogic = wire[ServiceLogic]
+    val anotherPassword = "111111"
+
+    val up = UsernamePassword(username, Option(anotherPassword))
+    val f = serviceLogic.verifyUsernamePassword(up)
+
+    f.map { e =>
+      e.isLeft should be(true)
     }
   }
 }
