@@ -1,18 +1,19 @@
 ThisBuild / scalaVersion := "2.13.7"
 ThisBuild / version := "0.1"
-ThisBuild / organization := "com.example"
-ThisBuild / organizationName := "example"
+ThisBuild / organization := "com.github.gcnyin"
+ThisBuild / organizationName := "mini-blog"
 
-val tapirVersion = "0.19.0"
+val tapirVersion = "0.19.1"
 val akkaVersion = "2.6.17"
+val macwireVersion = "2.5.0"
 
 lazy val root = (project in file("."))
   .settings(
-    name := "blog",
+    name := "mini-blog",
     libraryDependencies ++= Seq(
       // dependency injection
-      "com.softwaremill.macwire" %% "macros" % "2.4.0" % Provided,
-      "com.softwaremill.macwire" %% "util" % "2.4.0",
+      "com.softwaremill.macwire" %% "macros" % macwireVersion % Provided,
+      "com.softwaremill.macwire" %% "util" % macwireVersion,
       // http
       "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server" % tapirVersion,
       "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % tapirVersion,
@@ -34,12 +35,13 @@ lazy val root = (project in file("."))
       // logging
       "ch.qos.logback" % "logback-classic" % "1.2.7",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
-      "commons-logging" % "commons-logging" % "1.2",
+      "commons-logging" % "commons-logging" % "1.2", // because of spring-security-crypto
       // test
       "org.scalatest" %% "scalatest" % "3.2.10" % Test,
       "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
       "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test,
     ),
     coverageEnabled := true,
+    scalacOptions ++= Seq(),
   )
   .enablePlugins(JavaAppPackaging)
