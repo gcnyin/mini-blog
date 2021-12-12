@@ -11,13 +11,11 @@ import sttp.tapir.model.UsernamePassword
 import java.time.Instant
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
-class ServiceLogic(userRepository: UserRepository, postRepository: PostRepository)(implicit
-    val ec: ExecutionContextExecutor,
-    system: ActorSystem[_]
-) {
+class ServiceLogic(userRepository: UserRepository, postRepository: PostRepository, actorSystem: ActorSystem[_]) {
+  private implicit val ce: ExecutionContextExecutor = actorSystem.executionContext
 
   private val passwordEncoder: PasswordEncoder = new BCryptPasswordEncoder()
-  private val key = system.settings.config.getString("jwt.key")
+  private val key = actorSystem.settings.config.getString("jwt.key")
   private val jwtComponent: JwtComponent = new JwtComponent(key, Instant.now)
 
   def getPostById(postId: String): Future[Either[Message, Post]] =

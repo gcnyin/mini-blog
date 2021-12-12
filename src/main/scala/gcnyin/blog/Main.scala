@@ -31,16 +31,11 @@ object Main {
     implicit val context: ExecutionContextExecutor = system.executionContext
 
     val port = System.getProperty("http.port", "8080").toInt
-
-    lazy val mc = wire[MongoClient]
-    lazy val userRepo = wire[UserRepository.Impl]
-    lazy val postRepo = wire[PostRepository.Impl]
-    lazy val sl = wire[ServiceLogic]
-    lazy val c = wire[Controller]
+    val controller = ZioLayer.getController
 
     Http()
       .newServerAt("0.0.0.0", port)
-      .bindFlow(c.route)
+      .bindFlow(controller.route)
       .onComplete {
         case Failure(exception) =>
           logger.error("Failed to start server", exception)

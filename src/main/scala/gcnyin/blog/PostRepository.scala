@@ -1,34 +1,36 @@
 package gcnyin.blog
 
+import akka.actor.typed.ActorSystem
 import cats.data.EitherT
-import Model.{Message, Post, PostUpdateBody}
-import gcnyin.blog.Model.{Message, Post, PostUpdateBody}
+import gcnyin.blog.Model._
 import reactivemongo.api.bson.{BSONObjectID, document}
 import reactivemongo.api.commands.WriteResult
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
 trait PostRepository {
-  def getPostsWithoutContent: Future[Seq[Model.PostWithoutContent]]
+  def getPostsWithoutContent: Future[Seq[PostWithoutContent]]
 
   def getPostById(postId: String): Future[Either[Message, Post]]
 
-  def savePostWithoutCreated(post: Model.PostWithoutCreated): Future[Either[Message, Message]]
+  def savePostWithoutCreated(post: PostWithoutCreated): Future[Either[Message, Message]]
 
   def updatePost(postId: String, post: PostUpdateBody): Future[Either[Message, Message]]
 }
 
 object PostRepository {
-  class Impl(mongoClient: MongoClient)(implicit val ec: ExecutionContextExecutor) extends PostRepository {
+  class Impl(actorSystem: ActorSystem[_], mongoClient: MongoClient) extends PostRepository {
+    private implicit val ec: ExecutionContextExecutor = actorSystem.executionContext
+
     private val right: Either[Message, Message] =
       Right(Message("Post saved successfully"))
 
-    override def getPostsWithoutContent: Future[Seq[Model.PostWithoutContent]] =
+    override def getPostsWithoutContent: Future[Seq[PostWithoutContent]] =
       for {
         coll <- mongoClient.postsCollectionFuture
         f <- coll
           .find(document())
-          .cursor[Model.PostWithoutContent]()
+          .cursor[PostWithoutContent]()
           .collect[Vector]()
       } yield f
 
@@ -50,7 +52,7 @@ object PostRepository {
       } yield post
     }.value
 
-    override def savePostWithoutCreated(post: Model.PostWithoutCreated): Future[Either[Message, Message]] =
+    override def savePostWithoutCreated(post: PostWithoutCreated): Future[Either[Message, Message]] =
       for {
         coll <- mongoClient.postsCollectionFuture
         wr: WriteResult <- coll.insert.one(

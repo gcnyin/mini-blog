@@ -6,12 +6,14 @@ ThisBuild / organizationName := "mini-blog"
 val tapirVersion = "0.19.1"
 val akkaVersion = "2.6.17"
 val macwireVersion = "2.5.0"
+val zioVersion = "1.0.12"
 
 lazy val root = (project in file("."))
   .settings(
     name := "mini-blog",
     libraryDependencies ++= Seq(
       // dependency injection
+      "dev.zio" %% "zio" % zioVersion,
       "com.softwaremill.macwire" %% "macros" % macwireVersion % Provided,
       "com.softwaremill.macwire" %% "util" % macwireVersion,
       // http

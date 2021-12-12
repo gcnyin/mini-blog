@@ -1,6 +1,7 @@
 package gcnyin.blog
 
-import Model._
+import akka.actor.typed.ActorSystem
+import gcnyin.blog.Model._
 import reactivemongo.api.bson.document
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -12,7 +13,8 @@ trait UserRepository {
 }
 
 object UserRepository {
-  class Impl(mongoClient: MongoClient)(implicit val ec: ExecutionContextExecutor) extends UserRepository {
+  class Impl(actorSystem: ActorSystem[_], mongoClient: MongoClient) extends UserRepository {
+    private implicit val ec: ExecutionContextExecutor = actorSystem.executionContext
 
     override def getUserByUsername(username: String): Future[Option[User]] =
       for {
