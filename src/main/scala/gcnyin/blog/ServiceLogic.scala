@@ -3,8 +3,7 @@ package gcnyin.blog
 import akka.actor.typed.ActorSystem
 import cats.data.EitherT
 import cats.implicits._
-import Model._
-import gcnyin.blog.Model.{Message, Post, PostUpdateBody, PostWithoutContent, PostWithoutCreated, Token, User, UserWithoutPassword}
+import gcnyin.blog.Model._
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import sttp.tapir.model.UsernamePassword
