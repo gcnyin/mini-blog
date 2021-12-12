@@ -1,4 +1,4 @@
-package com.github.gcnyin.blog
+package gcnyin.blog
 
 import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim}
 

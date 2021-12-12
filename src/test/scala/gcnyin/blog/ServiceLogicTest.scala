@@ -1,9 +1,9 @@
-package com.github.gcnyin.blog
+package gcnyin.blog
 
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import akka.actor.typed.ActorSystem
-import com.github.gcnyin.blog.Model.User
 import com.softwaremill.macwire.wire
+import gcnyin.blog.Model._
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec
@@ -13,7 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import sttp.tapir.model.UsernamePassword
 
 import java.time.Instant
-import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.concurrent.duration._
+import scala.concurrent.{Await, ExecutionContextExecutor, Future}
 
 class ServiceLogicTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll with MockitoSugar {
   val testKit: ActorTestKit = ActorTestKit()
@@ -25,8 +26,8 @@ class ServiceLogicTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll 
 
   it should "verify the token successfully if it's valid" in {
     lazy val userRepository = mock[UserRepository]
-    when(userRepository.getUserByUsername("tom"))
-      .thenReturn(Future.successful(Option(Model.User("tom", "123456"))))
+    when(userRepository.getUserWithoutPasswordByUsername("tom"))
+      .thenReturn(Future.successful(Option(UserWithoutPassword("tom"))))
     lazy val postRepository = mock[PostRepository]
     lazy val serviceLogic: ServiceLogic = wire[ServiceLogic]
     val key = system.settings.config.getString("jwt.key")
@@ -35,17 +36,13 @@ class ServiceLogicTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll 
 
     val user = serviceLogic.verifyToken(token)
 
-    user.map { e =>
-      e.isRight should be(true)
-      e.map { u =>
-        u.username should be("tome")
-      }
-    }
+    val e = Await.result(user, 1.second)
+    e should be(Right(UserWithoutPassword("tom")))
   }
 
   it should "verify the token failed if the username in the token doesn't exist" in {
     lazy val userRepository = mock[UserRepository]
-    when(userRepository.getUserByUsername("tom"))
+    when(userRepository.getUserWithoutPasswordByUsername("tom"))
       .thenReturn(Future.successful(Option.empty))
     lazy val postRepository = mock[PostRepository]
     lazy val serviceLogic: ServiceLogic = wire[ServiceLogic]
@@ -55,9 +52,8 @@ class ServiceLogicTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll 
 
     val user = serviceLogic.verifyToken(token)
 
-    user.map { e =>
-      e.isLeft should be(true)
-    }
+    val e = Await.result(user, 1.second)
+    e should be(Left(Message("username tom not found")))
   }
 
   it should "verify the username and password successfully if the password is correct" in {
@@ -71,15 +67,29 @@ class ServiceLogicTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll 
     lazy val postRepository = mock[PostRepository]
     lazy val serviceLogic: ServiceLogic = wire[ServiceLogic]
 
-    val up = UsernamePassword(username, Option(password))
+    val up = UsernamePassword(username, Option(rawPassword))
     val f = serviceLogic.verifyUsernamePassword(up)
 
-    f.map { e =>
-      e.isRight should be(true)
-      e.map { p =>
-        encoder.matches(rawPassword, p) should be(true)
-      }
-    }
+    val e = Await.result(f, 1.second)
+    e should be(Right(username))
+  }
+
+  it should "verify the username and password successfully if the user doesn't exist" in {
+    val encoder = new BCryptPasswordEncoder()
+    val rawPassword = "123456"
+    val password = encoder.encode(rawPassword)
+    val username = "tom"
+    lazy val userRepository = mock[UserRepository]
+    when(userRepository.getUserByUsername("tom"))
+      .thenReturn(Future.successful(Option.empty))
+    lazy val postRepository = mock[PostRepository]
+    lazy val serviceLogic: ServiceLogic = wire[ServiceLogic]
+
+    val up = UsernamePassword(username, Option(rawPassword))
+    val f = serviceLogic.verifyUsernamePassword(up)
+
+    val e = Await.result(f, 1.second)
+    e should be(Left(Message("user tom not found")))
   }
 
   it should "verify the username and password failed if the password is wrong" in {
@@ -97,8 +107,25 @@ class ServiceLogicTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll 
     val up = UsernamePassword(username, Option(anotherPassword))
     val f = serviceLogic.verifyUsernamePassword(up)
 
-    f.map { e =>
-      e.isLeft should be(true)
-    }
+    val e = Await.result(f, 1.second)
+    e should be(Left(Message("username and password do not match")))
+  }
+
+  it should "verify the username and password failed if the input password is empty" in {
+    val encoder = new BCryptPasswordEncoder()
+    val rawPassword = "123456"
+    val password = encoder.encode(rawPassword)
+    val username = "tom"
+    lazy val userRepository = mock[UserRepository]
+    when(userRepository.getUserByUsername("tom"))
+      .thenReturn(Future.successful(Option(User(username, password))))
+    lazy val postRepository = mock[PostRepository]
+    lazy val serviceLogic: ServiceLogic = wire[ServiceLogic]
+
+    val up = UsernamePassword(username, Option.empty)
+    val f = serviceLogic.verifyUsernamePassword(up)
+
+    val e = Await.result(f, 1.second)
+    e should be(Left(Message("password missing")))
   }
 }

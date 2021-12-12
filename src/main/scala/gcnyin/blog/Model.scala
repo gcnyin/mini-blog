@@ -1,4 +1,4 @@
-package com.github.gcnyin.blog
+package gcnyin.blog
 
 import reactivemongo.api.bson.Macros.Annotations.{Key, Reader}
 import reactivemongo.api.bson.{BSONDocumentHandler, BSONObjectID, BSONReader, Macros}

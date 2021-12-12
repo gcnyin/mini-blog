@@ -1,4 +1,4 @@
-package com.github.gcnyin.blog
+package gcnyin.blog
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers

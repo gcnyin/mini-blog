@@ -1,6 +1,7 @@
-package com.github.gcnyin.blog
+package gcnyin.blog
 
-import com.github.gcnyin.blog.Model._
+import Model._
+import gcnyin.blog.Model.{Message, Post, PostUpdateBody, PostWithoutContent, PostWithoutCreated, Token}
 import io.circe.generic.auto._
 import sttp.tapir._
 import sttp.tapir.generic.auto._

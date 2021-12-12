@@ -1,4 +1,4 @@
-package com.github.gcnyin.blog
+package gcnyin.blog
 
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorSystem, Behavior}

@@ -1,9 +1,9 @@
-package com.github.gcnyin.blog
+package gcnyin.blog
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import com.github.gcnyin.blog.Model.{Message, userWithoutPasswordHandler}
-import com.github.gcnyin.blog.TapirEndpoint._
+import Model.Message
+import TapirEndpoint._
 import sttp.tapir._
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.server.akkahttp.{AkkaHttpServerInterpreter, AkkaHttpServerOptions}
@@ -43,11 +43,12 @@ class Controller(serviceLogic: ServiceLogic) {
         .serverLogic(username => _ => serviceLogic.createToken(username))
     )
 
-  private val updatePost: Route = AkkaHttpServerInterpreter(serverOptions).toRoute(
-    updatePostEndpoint
-      .serverSecurityLogic(serviceLogic.verifyToken)
-      .serverLogic(_ => request => serviceLogic.updatePost(request._1, request._2))
-  )
+  private val updatePost: Route =
+    AkkaHttpServerInterpreter(serverOptions).toRoute(
+      updatePostEndpoint
+        .serverSecurityLogic(serviceLogic.verifyToken)
+        .serverLogic(_ => request => serviceLogic.updatePost _ tupled request)
+    )
 
   private val apiList: List[AnyEndpoint] =
     List(postsEndpoint, postEndpoint, updatePostEndpoint, createPostEndpoint, createTokenEndpoint)

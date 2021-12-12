@@ -1,7 +1,8 @@
-package com.github.gcnyin.blog
+package gcnyin.blog
 
 import cats.data.EitherT
-import com.github.gcnyin.blog.Model.{Message, Post, PostUpdateBody}
+import Model.{Message, Post, PostUpdateBody}
+import gcnyin.blog.Model.{Message, Post, PostUpdateBody}
 import reactivemongo.api.bson.{BSONObjectID, document}
 import reactivemongo.api.commands.WriteResult
 

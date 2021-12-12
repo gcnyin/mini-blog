@@ -1,4 +1,4 @@
-package com.github.gcnyin.blog
+package gcnyin.blog
 
 import akka.actor.typed.ActorSystem
 import reactivemongo.api.MongoConnection.ParsedURI

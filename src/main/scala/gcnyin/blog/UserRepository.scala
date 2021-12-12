@@ -1,6 +1,6 @@
-package com.github.gcnyin.blog
+package gcnyin.blog
 
-import com.github.gcnyin.blog.Model._
+import Model._
 import reactivemongo.api.bson.document
 
 import scala.concurrent.{ExecutionContextExecutor, Future}

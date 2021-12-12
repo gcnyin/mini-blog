@@ -1,9 +1,10 @@
-package com.github.gcnyin.blog
+package gcnyin.blog
 
 import akka.actor.typed.ActorSystem
 import cats.data.EitherT
 import cats.implicits._
-import com.github.gcnyin.blog.Model._
+import Model._
+import gcnyin.blog.Model.{Message, Post, PostUpdateBody, PostWithoutContent, PostWithoutCreated, Token, User, UserWithoutPassword}
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import sttp.tapir.model.UsernamePassword
@@ -61,6 +62,6 @@ class ServiceLogic(userRepository: UserRepository, postRepository: PostRepositor
       rawPassword <- up.password.toRight(Message("password missing"))
       username <-
         if (passwordEncoder.matches(rawPassword, user.password)) Right(user.username)
-        else Left(Message("password doesn't match"))
+        else Left(Message("username and password do not match"))
     } yield username
 }
