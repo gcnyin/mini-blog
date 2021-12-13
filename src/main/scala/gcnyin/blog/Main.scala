@@ -3,7 +3,6 @@ package gcnyin.blog
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorSystem, Behavior}
 import akka.http.scaladsl.Http
-import com.softwaremill.macwire.wire
 import com.typesafe.scalalogging.Logger
 
 import scala.concurrent.ExecutionContextExecutor

@@ -39,4 +39,6 @@ object Model {
 
   implicit val tokenHandler: BSONDocumentHandler[Token] =
     Macros.handler[Token]
+
+  final case class NewPassword(password: String)
 }

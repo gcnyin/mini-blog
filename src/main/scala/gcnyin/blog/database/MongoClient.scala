@@ -1,4 +1,4 @@
-package gcnyin.blog
+package gcnyin.blog.database
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.config.Config

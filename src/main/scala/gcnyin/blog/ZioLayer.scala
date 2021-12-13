@@ -1,8 +1,10 @@
 package gcnyin.blog
 
 import akka.actor.typed.ActorSystem
-import gcnyin.blog.PostRepository.{Impl => PostRepositoryImpl}
-import gcnyin.blog.UserRepository.{Impl => UserRepositoryImpl}
+import gcnyin.blog.database.MongoClient
+import gcnyin.blog.repository.PostRepository.{Impl => PostRepositoryImpl}
+import gcnyin.blog.repository.UserRepository.{Impl => UserRepositoryImpl}
+import gcnyin.blog.repository.{PostRepository, UserRepository}
 import zio._
 
 object ZioLayer {

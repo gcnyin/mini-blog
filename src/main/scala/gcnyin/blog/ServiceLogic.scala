@@ -4,6 +4,7 @@ import akka.actor.typed.ActorSystem
 import cats.data.EitherT
 import cats.implicits._
 import gcnyin.blog.Model._
+import gcnyin.blog.repository.{PostRepository, UserRepository}
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import sttp.tapir.model.UsernamePassword
@@ -49,6 +50,9 @@ class ServiceLogic(userRepository: UserRepository, postRepository: PostRepositor
 
   def updatePost(postId: String, post: PostUpdateBody): Future[Either[Message, Message]] =
     postRepository.updatePost(postId, post)
+
+  def updateUserPassword(username: String, newPassword: String): Future[Either[Message, Message]] =
+    userRepository.updateUserPassword(username, passwordEncoder.encode(newPassword))
 
   private def verifyPassword(
       ou: Option[User],

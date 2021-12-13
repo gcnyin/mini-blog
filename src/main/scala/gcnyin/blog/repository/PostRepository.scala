@@ -1,8 +1,9 @@
-package gcnyin.blog
+package gcnyin.blog.repository
 
 import akka.actor.typed.ActorSystem
 import cats.data.EitherT
 import gcnyin.blog.Model._
+import gcnyin.blog.database.MongoClient
 import reactivemongo.api.bson.{BSONObjectID, document}
 import reactivemongo.api.commands.WriteResult
 

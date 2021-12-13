@@ -14,8 +14,6 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       // dependency injection
       "dev.zio" %% "zio" % zioVersion,
-      "com.softwaremill.macwire" %% "macros" % macwireVersion % Provided,
-      "com.softwaremill.macwire" %% "util" % macwireVersion,
       // http
       "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server" % tapirVersion,
       "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % tapirVersion,
@@ -39,6 +37,8 @@ lazy val root = (project in file("."))
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
       "commons-logging" % "commons-logging" % "1.2", // because of spring-security-crypto
       // test
+      "com.softwaremill.macwire" %% "macros" % macwireVersion % Test,
+      "com.softwaremill.macwire" %% "util" % macwireVersion % Test,
       "org.scalatest" %% "scalatest" % "3.2.10" % Test,
       "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
       "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test,
