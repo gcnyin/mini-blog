@@ -31,7 +31,7 @@ sbt clean stage
 ./target/universal/stage/bin/blog
 ```
 
-Default username and password: `admin:123456`.
+Default username and password: `admin:qhI3CZ^9*5^*n3`.
 
 ## Test
 
@@ -48,3 +48,7 @@ sbt coveralls
 ## OpenApi
 
 http://localhost:8080/docs/index.html?url=/docs/docs.yaml
+
+## Postman
+
+Import collection json in `postman` directory.
