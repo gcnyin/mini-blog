@@ -6,10 +6,10 @@ import gcnyin.blog.UserRepository.{Impl => UserRepositoryImpl}
 import zio._
 
 object ZioLayer {
-  private val mongoClientLive: URLayer[Has[ActorSystem[_]], Has[MongoClient]] =
+  private val mongoClientLive: URLayer[Has[ActorSystem[Nothing]], Has[MongoClient]] =
     (new MongoClient(_)).toLayer
 
-  type RepositoryEnv = Has[ActorSystem[_]] with Has[MongoClient]
+  type RepositoryEnv = Has[ActorSystem[Nothing]] with Has[MongoClient]
 
   private val postRepositoryLive: URLayer[RepositoryEnv, Has[PostRepository]] =
     (new PostRepositoryImpl(_, _)).toLayer
@@ -17,7 +17,7 @@ object ZioLayer {
   private val userRepositoryLive: URLayer[RepositoryEnv, Has[UserRepository]] =
     (new UserRepositoryImpl(_, _)).toLayer
 
-  type ServiceEnv = Has[UserRepository] with Has[PostRepository] with Has[ActorSystem[_]]
+  type ServiceEnv = Has[UserRepository] with Has[PostRepository] with Has[ActorSystem[Nothing]]
 
   private val serviceLive: ZLayer[ServiceEnv, Nothing, Has[ServiceLogic]] =
     (new ServiceLogic(_, _, _)).toLayer
@@ -25,8 +25,8 @@ object ZioLayer {
   private val controllerLive: URLayer[Has[ServiceLogic], Has[Controller]] =
     (new Controller(_)).toLayer
 
-  def getController(implicit actorSystem: ActorSystem[_]): Controller = {
-    val actorSystemLayer: ULayer[Has[ActorSystem[_]]] = ZLayer.succeed(actorSystem)
+  def getController(implicit actorSystem: ActorSystem[Nothing]): Controller = {
+    val actorSystemLayer = ZLayer.succeed(actorSystem)
     val mongoLayer = actorSystemLayer >>> mongoClientLive
     val repositoryEnvLayer = actorSystemLayer ++ mongoLayer
     val userRepositoryLayer = repositoryEnvLayer >>> userRepositoryLive

@@ -19,7 +19,7 @@ trait PostRepository {
 }
 
 object PostRepository {
-  class Impl(actorSystem: ActorSystem[_], mongoClient: MongoClient) extends PostRepository {
+  class Impl(actorSystem: ActorSystem[Nothing], mongoClient: MongoClient) extends PostRepository {
     private implicit val ec: ExecutionContextExecutor = actorSystem.executionContext
 
     private val right: Either[Message, Message] =

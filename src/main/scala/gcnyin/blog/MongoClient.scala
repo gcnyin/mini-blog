@@ -8,7 +8,7 @@ import reactivemongo.api.{AsyncDriver, DB, MongoConnection}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MongoClient(actorSystem: ActorSystem[_]) {
+class MongoClient(actorSystem: ActorSystem[Nothing]) {
   private implicit val ec: ExecutionContext = actorSystem.executionContext
 
   private val config: Config =

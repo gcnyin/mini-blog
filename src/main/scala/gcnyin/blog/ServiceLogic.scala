@@ -11,7 +11,7 @@ import sttp.tapir.model.UsernamePassword
 import java.time.Instant
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
-class ServiceLogic(userRepository: UserRepository, postRepository: PostRepository, actorSystem: ActorSystem[_]) {
+class ServiceLogic(userRepository: UserRepository, postRepository: PostRepository, actorSystem: ActorSystem[Nothing]) {
   private implicit val ce: ExecutionContextExecutor = actorSystem.executionContext
 
   private val passwordEncoder: PasswordEncoder = new BCryptPasswordEncoder()

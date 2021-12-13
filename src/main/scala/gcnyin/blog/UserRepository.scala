@@ -13,7 +13,7 @@ trait UserRepository {
 }
 
 object UserRepository {
-  class Impl(actorSystem: ActorSystem[_], mongoClient: MongoClient) extends UserRepository {
+  class Impl(actorSystem: ActorSystem[Nothing], mongoClient: MongoClient) extends UserRepository {
     private implicit val ec: ExecutionContextExecutor = actorSystem.executionContext
 
     override def getUserByUsername(username: String): Future[Option[User]] =
