@@ -2,7 +2,7 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/gcnyin/mini-blog/badge.svg?branch=master)](https://coveralls.io/github/gcnyin/mini-blog?branch=master)
 
-Personal blog system powered by Akka, Tapir, Zio and MongoDB.
+Personal blog system powered by Akka, Tapir, Zio, Cats and MongoDB.
 
 ## Requirements
 
