@@ -7,6 +7,7 @@ val tapirVersion = "0.19.1"
 val akkaVersion = "2.6.17"
 val macwireVersion = "2.5.0"
 val zioVersion = "1.0.12"
+val zioLoggingVersion = "0.5.14"
 
 lazy val root = (project in file("."))
   .settings(
@@ -36,6 +37,8 @@ lazy val root = (project in file("."))
       "ch.qos.logback" % "logback-classic" % "1.2.7",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
       "commons-logging" % "commons-logging" % "1.2", // because of spring-security-crypto
+      "dev.zio" %% "zio-logging" % zioLoggingVersion,
+      "dev.zio" %% "zio-logging-slf4j" % zioLoggingVersion,
       // test
       "com.softwaremill.macwire" %% "macros" % macwireVersion % Test,
       "com.softwaremill.macwire" %% "util" % macwireVersion % Test,

@@ -1,15 +1,20 @@
 package gcnyin.blog
 
+import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ActorSystem, Behavior}
 import akka.http.scaladsl.Http
 import com.typesafe.scalalogging.Logger
+import zio.logging._
+import zio.logging.slf4j._
+import zio.{ExitCode, ULayer, UManaged, URIO, ZIO, ZManaged}
 
-import scala.concurrent.ExecutionContextExecutor
-import scala.util.{Failure, Success}
+import scala.concurrent.Future
 
-object Main {
+object Main extends zio.App {
   private val logger = Logger[Main.type]
+
+  private val env: ULayer[Logging] =
+    Slf4jLogger.make { (_, message) => message }
 
   private val s =
     """.______    __        ______     ______
@@ -21,27 +26,34 @@ object Main {
 
   s.split("\n").foreach(it => logger.info(it))
 
-  def main(args: Array[String]): Unit = {
-    ActorSystem(root(), "root")
-  }
+  override def run(args: List[String]): URIO[zio.ZEnv, ExitCode] = {
+    for {
+      system <- actorSystemUManaged
+      controller <- ZioLayer.controllerUManaged(system)
+      httpServer <- httpServerManaged(system, controller)
+      _ <- log.info(s"$httpServer").toManaged_
+    } yield httpServer
+  }.provideCustomLayer(env).useForever.exitCode
 
-  def root(): Behavior[Unit] = Behaviors.setup[Unit] { ctx =>
-    implicit val system: ActorSystem[Nothing] = ctx.system
-    implicit val context: ExecutionContextExecutor = system.executionContext
+  def actorSystemUManaged: UManaged[ActorSystem[Unit]] =
+    ZManaged.make(ZIO.succeed(ActorSystem(Behaviors.empty[Unit], "root"))) { sys =>
+      ZIO.effectTotal(sys.terminate())
+    }
 
-    val port = System.getProperty("http.port", "8080").toInt
-    val controller = ZioLayer.getController
+  def httpServerManaged(
+                         actorSystem: ActorSystem[Nothing],
+                         controller: Controller
+                       ): ZManaged[Any, Throwable, Http.ServerBinding] = {
+    implicit val system: ActorSystem[Nothing] = actorSystem
 
-    Http()
-      .newServerAt("0.0.0.0", port)
-      .bindFlow(controller.route)
-      .onComplete {
-        case Failure(exception) =>
-          logger.error("Failed to start server", exception)
-        case Success(value) =>
-          logger.info("{}", value)
-      }
+    def httpServer(): Future[Http.ServerBinding] = {
+      Http()
+        .newServerAt("0.0.0.0", 8080)
+        .bind(controller.route)
+    }
 
-    Behaviors.empty
+    ZManaged.make(ZIO.fromFuture(_ => httpServer())) { http =>
+      ZIO.fromFuture(_ => http.unbind()).orDie
+    }
   }
 }

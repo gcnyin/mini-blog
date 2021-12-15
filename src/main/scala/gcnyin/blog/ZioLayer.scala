@@ -27,7 +27,7 @@ object ZioLayer {
   private val controllerLive: URLayer[Has[ServiceLogic], Has[Controller]] =
     (new Controller(_)).toLayer
 
-  def getController(implicit actorSystem: ActorSystem[Nothing]): Controller = {
+  def controllerUManaged(actorSystem: ActorSystem[Nothing]): UManaged[Controller] = {
     val actorSystemLayer = ZLayer.succeed(actorSystem)
     val mongoLayer = actorSystemLayer >>> mongoClientLive
     val repositoryEnvLayer = actorSystemLayer ++ mongoLayer
@@ -35,6 +35,9 @@ object ZioLayer {
     val postRepositoryLayer = repositoryEnvLayer >>> postRepositoryLive
     val serviceLayer = actorSystemLayer ++ userRepositoryLayer ++ postRepositoryLayer >>> serviceLive
     val controllerLayer = serviceLayer >>> controllerLive
-    Runtime.default.unsafeRun(controllerLayer.build.useNow).get[Controller]
+
+    controllerLayer
+      .build
+      .map(_.get)
   }
 }
