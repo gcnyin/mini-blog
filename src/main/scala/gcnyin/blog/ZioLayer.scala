@@ -36,8 +36,7 @@ object ZioLayer {
     val serviceLayer = actorSystemLayer ++ userRepositoryLayer ++ postRepositoryLayer >>> serviceLive
     val controllerLayer = serviceLayer >>> controllerLive
 
-    controllerLayer
-      .build
+    controllerLayer.build
       .map(_.get)
   }
 }

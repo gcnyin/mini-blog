@@ -41,9 +41,9 @@ object Main extends zio.App {
     }
 
   def httpServerManaged(
-                         actorSystem: ActorSystem[Nothing],
-                         controller: Controller
-                       ): ZManaged[Any, Throwable, Http.ServerBinding] = {
+      actorSystem: ActorSystem[Nothing],
+      controller: Controller
+  ): ZManaged[Any, Throwable, Http.ServerBinding] = {
     implicit val system: ActorSystem[Nothing] = actorSystem
 
     def httpServer(): Future[Http.ServerBinding] = {
