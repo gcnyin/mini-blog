@@ -42,14 +42,14 @@ class ServiceLogic(userRepository: UserRepository, postRepository: PostRepositor
     postRepository.getPostsWithoutContent
       .map(posts => Right(posts.sortBy(_.created).reverse))
 
-  def savePostWithoutCreated(
-      user: UserWithoutPassword,
-      post: PostWithoutCreated
-  ): Future[Either[Message, Message]] =
+  def savePostWithoutCreated(post: PostWithoutCreated): Future[Either[Message, Message]] =
     postRepository.savePostWithoutCreated(post)
 
   def updatePost(postId: String, post: PostUpdateBody): Future[Either[Message, Message]] =
     postRepository.updatePost(postId, post)
+
+  def deletePost(postId: String): Future[Either[Message, Message]] =
+    postRepository.deletePost(postId)
 
   def updateUserPassword(username: String, newPassword: String): Future[Either[Message, Message]] =
     userRepository.updateUserPassword(username, passwordEncoder.encode(newPassword))

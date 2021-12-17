@@ -93,6 +93,13 @@ object TapirEndpoint {
       .out(messageBody)
       .description("update post")
 
+  val deletePostEndpoint: Endpoint[String, String, Message, Message, Any] =
+    jwtAuthEndpoint
+      .in("posts" / path[String]("postId"))
+      .delete
+      .out(messageBody)
+      .description("delete post")
+
   val updatePasswordEndpoint: Endpoint[String, NewPassword, Message, Message, Any] =
     jwtAuthEndpoint
       .in("users" / "updatePassword")

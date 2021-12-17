@@ -33,7 +33,7 @@ class Controller(serviceLogic: ServiceLogic) {
     AkkaHttpServerInterpreter(serverOptions).toRoute(
       createPostEndpoint
         .serverSecurityLogic(serviceLogic.verifyToken)
-        .serverLogic(userWithoutPassword => post => serviceLogic.savePostWithoutCreated(userWithoutPassword, post))
+        .serverLogic(_ => post => serviceLogic.savePostWithoutCreated(post))
     )
 
   private val createToken: Route =
@@ -50,6 +50,13 @@ class Controller(serviceLogic: ServiceLogic) {
         .serverLogic(_ => request => serviceLogic.updatePost _ tupled request)
     )
 
+  val deletePost: Route =
+    AkkaHttpServerInterpreter(serverOptions).toRoute(
+      deletePostEndpoint
+        .serverSecurityLogic(serviceLogic.verifyToken)
+        .serverLogic(_ => postId => serviceLogic.deletePost(postId))
+    )
+
   private val updateUserPassword: Route =
     AkkaHttpServerInterpreter(serverOptions).toRoute(
       updatePasswordEndpoint
@@ -63,6 +70,7 @@ class Controller(serviceLogic: ServiceLogic) {
       postEndpoint,
       updatePostEndpoint,
       createPostEndpoint,
+      deletePostEndpoint,
       createTokenEndpoint,
       updatePasswordEndpoint
     )
@@ -74,6 +82,6 @@ class Controller(serviceLogic: ServiceLogic) {
     AkkaHttpServerInterpreter(serverOptions).toRoute(swaggerRoute)
 
   val route: Route = encodeResponse {
-    openApi ~ posts ~ post ~ createPost ~ updatePost ~ createToken ~ updateUserPassword
+    openApi ~ posts ~ post ~ createPost ~ updatePost ~ deletePost ~ createToken ~ updateUserPassword
   }
 }

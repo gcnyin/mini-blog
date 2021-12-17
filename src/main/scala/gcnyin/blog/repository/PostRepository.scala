@@ -17,6 +17,8 @@ trait PostRepository {
   def savePostWithoutCreated(post: PostWithoutCreated): Future[Either[Message, Message]]
 
   def updatePost(postId: String, post: PostUpdateBody): Future[Either[Message, Message]]
+
+  def deletePost(postId: String): Future[Either[Message, Message]]
 }
 
 object PostRepository {
@@ -24,7 +26,7 @@ object PostRepository {
     private implicit val ec: ExecutionContextExecutor = actorSystem.executionContext
 
     private val right: Either[Message, Message] =
-      Right(Message("Post saved successfully"))
+      Right(Message("updated successfully"))
 
     override def getPostsWithoutContent: Future[Seq[PostWithoutContent]] =
       for {
@@ -79,6 +81,25 @@ object PostRepository {
             .one(
               document("_id" -> id),
               document("$set" -> document("title" -> post.title, "content" -> post.content))
+            )
+            .map(wr => wr.writeConcernError.fold(right) { it => Left(Message(it.errmsg)) })
+        )
+      } yield msg
+    }.value
+
+    override def deletePost(postId: String): Future[Either[Message, Message]] = {
+      for {
+        coll <- EitherT.liftF(mongoClient.postsCollectionFuture)
+        id <- EitherT.fromEither[Future](
+          BSONObjectID
+            .parse(postId)
+            .toOption
+            .toRight(Message(s"invalid post id: $postId"))
+        )
+        msg <- EitherT(
+          coll.delete
+            .one(
+              document("_id" -> id)
             )
             .map(wr => wr.writeConcernError.fold(right) { it => Left(Message(it.errmsg)) })
         )

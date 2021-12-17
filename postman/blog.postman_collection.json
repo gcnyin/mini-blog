@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "eed4aa1c-0599-43ab-91b5-3cd4b14ce0ea",
+		"_postman_id": "c976dc35-749c-45d5-8a6f-a29eeeda7eda",
 		"name": "blog",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
 		{
@@ -10,18 +10,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api/posts",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"posts"
-					]
-				}
+				"url": "http://localhost:8080/api/posts"
 			},
 			"response": []
 		},
@@ -32,7 +21,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTYzOTgyMzQ1MCwiaWF0IjoxNjM5MjE4NjUwfQ.QxK7oFkEu4TyqN1wnsLmX0YfOyKxMNhqVW6DGZI0XmU",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					}
 				],
@@ -45,44 +34,34 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:8080/api/posts",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"posts"
-					]
-				}
+				"url": "http://localhost:8080/api/posts"
 			},
 			"response": []
 		},
 		{
 			"name": "create token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Basic YWRtaW46cWhJM0NaXjkqNV4qbjM=",
+						"value": "Basic YWRtaW46MTIzNDU2",
 						"type": "text"
 					}
 				],
-				"url": {
-					"raw": "http://localhost:8080/api/tokens",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"tokens"
-					]
-				}
+				"url": "http://localhost:8080/api/tokens"
 			},
 			"response": []
 		},
@@ -106,19 +85,7 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:8080/api/posts/61b054db284b5dddba3c0ce2",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"posts",
-						"61b054db284b5dddba3c0ce2"
-					]
-				}
+				"url": "http://localhost:8080/api/posts/61b054db284b5dddba3c0ce2"
 			},
 			"response": []
 		},
@@ -135,26 +102,29 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"password\": \"123456789012\"\n}",
+					"raw": "{\n    \"password\": \"abcdefghijklmnop\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:8080/api/users/updatePassword",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"users",
-						"updatePassword"
-					]
-				}
+				"url": "http://localhost:8080/api/users/updatePassword"
+			},
+			"response": []
+		},
+		{
+			"name": "delete post",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": "http://localhost:8080/api/posts/61bc7fd14ba439ada762fda7"
 			},
 			"response": []
 		}
