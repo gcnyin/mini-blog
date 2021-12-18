@@ -1,12 +1,13 @@
-package gcnyin.blog
+package gcnyin.blog.common
 
-import gcnyin.blog.Model._
+import gcnyin.blog.common.Dto._
 import io.circe.generic.auto._
 import sttp.tapir.Validator.{MaxLength, MinLength}
 import sttp.tapir._
 import sttp.tapir.generic.auto._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.model.UsernamePassword
+
 
 object TapirEndpoint {
   val messageBody: EndpointIO.Body[String, Message] =

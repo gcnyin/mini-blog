@@ -8,17 +8,35 @@ val akkaVersion = "2.6.17"
 val macwireVersion = "2.5.0"
 val zioVersion = "1.0.12"
 val zioLoggingVersion = "0.5.14"
+val circeVersion = "0.14.1"
 
 lazy val root = (project in file("."))
+  .aggregate(foo.js, foo.jvm)
   .settings(
     name := "mini-blog",
+    publish := {},
+    publishLocal := {},
+  )
+
+lazy val foo = crossProject(JSPlatform, JVMPlatform)
+  .in(file("."))
+  .settings(
+    name := "foo",
+    version := "0.1",
+    libraryDependencies ++= Seq(
+      "io.circe" %%% "circe-core" % circeVersion,
+      "io.circe" %%% "circe-generic" % circeVersion,
+      "io.circe" %%% "circe-parser" % circeVersion,
+      "com.softwaremill.sttp.tapir" %%% "tapir-json-circe" % tapirVersion,
+    ),
+  )
+  .jvmSettings(
+    name := "jvm",
     libraryDependencies ++= Seq(
       // dependency injection
       "dev.zio" %% "zio" % zioVersion,
       // http
       "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server" % tapirVersion,
-      "com.softwaremill.sttp.tapir" %% "tapir-json-circe" % tapirVersion,
-      "io.circe" %% "circe-generic" % "0.14.1",
       "de.heikoseeberger" %% "akka-http-circe" % "1.38.2",
       "com.typesafe.akka" %% "akka-http" % "10.2.7",
       // openapi
@@ -32,7 +50,7 @@ lazy val root = (project in file("."))
       "org.springframework.security" % "spring-security-crypto" % "5.6.0",
       "com.github.jwt-scala" %% "jwt-circe" % "9.0.2",
       // database
-      "org.reactivemongo" %% "reactivemongo" % "1.0.7",
+      "org.reactivemongo" %% "reactivemongo" % "1.0.8",
       // logging
       "ch.qos.logback" % "logback-classic" % "1.2.7",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
@@ -44,9 +62,18 @@ lazy val root = (project in file("."))
       "com.softwaremill.macwire" %% "util" % macwireVersion % Test,
       "org.scalatest" %% "scalatest" % "3.2.10" % Test,
       "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
-      "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test,
+      "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test
     ),
-    coverageEnabled := true,
-    scalacOptions ++= Seq(),
+    coverageEnabled := true
   )
-  .enablePlugins(JavaAppPackaging)
+  .jsSettings(
+    name := "js",
+    libraryDependencies ++= Seq(
+      "org.scala-js" %%% "scalajs-dom" % "2.0.0",
+      "com.softwaremill.sttp.tapir" %%% "tapir-sttp-client" % "0.19.1",
+      "io.github.cquiroz" %%% "scala-java-time" % "2.2.0",
+      "org.scala-js" %%% "scala-js-macrotask-executor" % "1.0.0",
+    ),
+    scalaJSUseMainModuleInitializer := true,
+    jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv(),
+  )

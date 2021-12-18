@@ -1,5 +1,6 @@
 package gcnyin.blog
 
+import gcnyin.blog.common.Dto.Message
 import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim}
 
 import java.time.{Duration, Instant}
@@ -17,10 +18,10 @@ class JwtComponent(key: String, currentTime: => Instant) {
     JwtCirce.encode(claim, key, algo)
   }
 
-  def parseToken(token: String): Either[Model.Message, String] =
+  def parseToken(token: String): Either[Message, String] =
     JwtCirce
       .decodeAll(token, key, Seq(JwtAlgorithm.HS256))
       .toOption
       .flatMap(_._2.subject)
-      .toRight(Model.Message("invalid token"))
+      .toRight(Message("invalid token"))
 }

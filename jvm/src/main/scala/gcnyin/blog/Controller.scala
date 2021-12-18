@@ -2,8 +2,8 @@ package gcnyin.blog
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import gcnyin.blog.Model.Message
 import gcnyin.blog.TapirEndpoint._
+import gcnyin.blog.common.Dto.Message
 import sttp.tapir._
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.server.akkahttp.{AkkaHttpServerInterpreter, AkkaHttpServerOptions}
@@ -64,6 +64,14 @@ class Controller(serviceLogic: ServiceLogic) {
         .serverLogic(user => password => serviceLogic.updateUserPassword(user.username, password.password))
     )
 
+  private val home: Route = AkkaHttpServerInterpreter(serverOptions).toRoute(
+    filesGetServerEndpoint[Future]("")("static")
+  )
+
+  private val static: Route = AkkaHttpServerInterpreter(serverOptions).toRoute(
+    filesGetServerEndpoint[Future]("static")("static")
+  )
+
   private val apiList: List[AnyEndpoint] =
     List(
       postsEndpoint,
@@ -72,7 +80,7 @@ class Controller(serviceLogic: ServiceLogic) {
       createPostEndpoint,
       deletePostEndpoint,
       createTokenEndpoint,
-      updatePasswordEndpoint
+      updatePasswordEndpoint,
     )
 
   private val swaggerRoute: List[ServerEndpoint[Any, Future]] =
@@ -82,6 +90,6 @@ class Controller(serviceLogic: ServiceLogic) {
     AkkaHttpServerInterpreter(serverOptions).toRoute(swaggerRoute)
 
   val route: Route = encodeResponse {
-    openApi ~ posts ~ post ~ createPost ~ updatePost ~ deletePost ~ createToken ~ updateUserPassword
+    openApi ~ posts ~ post ~ createPost ~ updatePost ~ deletePost ~ createToken ~ updateUserPassword ~ home ~ static
   }
 }

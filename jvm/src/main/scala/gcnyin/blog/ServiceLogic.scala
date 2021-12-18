@@ -4,6 +4,7 @@ import akka.actor.typed.ActorSystem
 import cats.data.EitherT
 import cats.implicits._
 import gcnyin.blog.Model._
+import gcnyin.blog.common.Dto.{Message, PostUpdateBody}
 import gcnyin.blog.repository.{PostRepository, UserRepository}
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder

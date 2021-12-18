@@ -4,6 +4,7 @@ import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import akka.actor.typed.ActorSystem
 import com.softwaremill.macwire.wire
 import gcnyin.blog.Model._
+import gcnyin.blog.common.Dto.Message
 import gcnyin.blog.repository.{PostRepository, UserRepository}
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
