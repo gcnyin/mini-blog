@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "c976dc35-749c-45d5-8a6f-a29eeeda7eda",
 		"name": "blog",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -10,7 +10,18 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "http://localhost:8080/api/posts"
+				"url": {
+					"raw": "http://localhost:8080/api/posts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"posts"
+					]
+				}
 			},
 			"response": []
 		},
@@ -34,7 +45,18 @@
 						}
 					}
 				},
-				"url": "http://localhost:8080/api/posts"
+				"url": {
+					"raw": "http://localhost:8080/api/posts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"posts"
+					]
+				}
 			},
 			"response": []
 		},
@@ -61,7 +83,18 @@
 						"type": "text"
 					}
 				],
-				"url": "http://localhost:8080/api/tokens"
+				"url": {
+					"raw": "http://localhost:8080/api/tokens",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"tokens"
+					]
+				}
 			},
 			"response": []
 		},
@@ -72,7 +105,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTYzOTgyMzQ1MCwiaWF0IjoxNjM5MjE4NjUwfQ.QxK7oFkEu4TyqN1wnsLmX0YfOyKxMNhqVW6DGZI0XmU",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					}
 				],
@@ -85,7 +118,19 @@
 						}
 					}
 				},
-				"url": "http://localhost:8080/api/posts/61b054db284b5dddba3c0ce2"
+				"url": {
+					"raw": "http://localhost:8080/api/posts/61b054db284b5dddba3c0ce2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"posts",
+						"61b054db284b5dddba3c0ce2"
+					]
+				}
 			},
 			"response": []
 		},
@@ -96,7 +141,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTYzOTgyMzQ1MCwiaWF0IjoxNjM5MjE4NjUwfQ.QxK7oFkEu4TyqN1wnsLmX0YfOyKxMNhqVW6DGZI0XmU",
+						"value": "Bearer {{token}}",
 						"type": "text"
 					}
 				],
@@ -109,7 +154,19 @@
 						}
 					}
 				},
-				"url": "http://localhost:8080/api/users/updatePassword"
+				"url": {
+					"raw": "http://localhost:8080/api/users/updatePassword",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"updatePassword"
+					]
+				}
 			},
 			"response": []
 		},
@@ -124,7 +181,19 @@
 						"type": "text"
 					}
 				],
-				"url": "http://localhost:8080/api/posts/61bc7fd14ba439ada762fda7"
+				"url": {
+					"raw": "http://localhost:8080/api/posts/61bc7fd14ba439ada762fda7",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"posts",
+						"61bc7fd14ba439ada762fda7"
+					]
+				}
 			},
 			"response": []
 		}

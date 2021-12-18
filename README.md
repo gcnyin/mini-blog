@@ -28,7 +28,7 @@ sbt clean stage
 ## Run
 
 ```
-./target/universal/stage/bin/blog
+./target/universal/stage/bin/mini-blog
 ```
 
 Default username and password: `admin:123456`.
