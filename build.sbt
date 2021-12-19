@@ -11,30 +11,30 @@ val zioLoggingVersion = "0.5.14"
 val circeVersion = "0.14.1"
 
 lazy val root = (project in file("."))
-  .aggregate(foo.js, foo.jvm)
+  .aggregate(cross.js, jvm)
   .settings(
     name := "mini-blog",
     publish := {},
     publishLocal := {},
   )
 
-lazy val foo = crossProject(JSPlatform, JVMPlatform)
+lazy val cross = crossProject(JSPlatform, JVMPlatform)
   .in(file("."))
   .settings(
-    name := "foo",
+    name := "cross",
     version := "0.1",
     libraryDependencies ++= Seq(
       "io.circe" %%% "circe-core" % circeVersion,
       "io.circe" %%% "circe-generic" % circeVersion,
       "io.circe" %%% "circe-parser" % circeVersion,
       "com.softwaremill.sttp.tapir" %%% "tapir-json-circe" % tapirVersion,
+      "dev.zio" %%% "zio" % zioVersion,
+      "dev.zio" %%% "zio-logging" % zioLoggingVersion,
     ),
   )
   .jvmSettings(
     name := "jvm",
     libraryDependencies ++= Seq(
-      // dependency injection
-      "dev.zio" %% "zio" % zioVersion,
       // http
       "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server" % tapirVersion,
       "de.heikoseeberger" %% "akka-http-circe" % "1.38.2",
@@ -55,7 +55,6 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform)
       "ch.qos.logback" % "logback-classic" % "1.2.7",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
       "commons-logging" % "commons-logging" % "1.2", // because of spring-security-crypto
-      "dev.zio" %% "zio-logging" % zioLoggingVersion,
       "dev.zio" %% "zio-logging-slf4j" % zioLoggingVersion,
       // test
       "com.softwaremill.macwire" %% "macros" % macwireVersion % Test,
@@ -73,7 +72,10 @@ lazy val foo = crossProject(JSPlatform, JVMPlatform)
       "com.softwaremill.sttp.tapir" %%% "tapir-sttp-client" % "0.19.1",
       "io.github.cquiroz" %%% "scala-java-time" % "2.2.0",
       "org.scala-js" %%% "scala-js-macrotask-executor" % "1.0.0",
+      "dev.zio" %%% "zio-logging-jsconsole" % zioLoggingVersion,
     ),
     scalaJSUseMainModuleInitializer := true,
     jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv(),
   )
+
+val jvm = cross.jvm.enablePlugins(JavaAppPackaging)

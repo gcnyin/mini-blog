@@ -2,7 +2,7 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/gcnyin/mini-blog/badge.svg?branch=master)](https://coveralls.io/github/gcnyin/mini-blog?branch=master)
 
-Personal blog system powered by Akka, Tapir, Zio, Cats and MongoDB.
+Personal blog system powered by Akka, Tapir, Zio, Cats, Scala.js and MongoDB.
 
 ## Requirements
 
@@ -30,14 +30,20 @@ Run the scripts in the `mongo-migration` directory in the MongoDB console.
 
 ## Build
 
-```
-sbt clean stage
+```shell
+sbt crossJS/fastLinkJS
+#or sbt crossJS/fullLinkJS
+
+cp js/target/scala-2.13/js-fastopt/main.js static/js
+#or cp js/target/scala-2.13/js-opt/main.js static/js
+
+sbt crossJVM/stage
 ```
 
 ## Run
 
 ```
-./target/universal/stage/bin/mini-blog
+./jvm/target/universal/stage/bin/jvm
 ```
 
 Default username and password: `admin:123456`.
