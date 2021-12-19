@@ -18,9 +18,11 @@ import java.time.ZoneId
 import java.util.TimeZone
 
 object Main {
-  val fetchBackend: SttpBackend[Future, capabilities.WebSockets] = FetchBackend()
+  TimeZone.setDefault(
+    TimeZone.getTimeZone("UTC")
+  ) // Because there is no other timezone in the web browser, such as Asia/Shanghai
 
-  TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
+  val fetchBackend: SttpBackend[Future, capabilities.WebSockets] = FetchBackend()
 
   val loggingEnv: ZLayer[Console with Clock, Nothing, Logging] =
     ConsoleLogger.make()
@@ -37,13 +39,15 @@ object Main {
   def setupUI(): Unit = {
     val ol = document.createElement("ol")
     val button = document.createElement("button")
+    button.classList.add("btn")
+    button.classList.add("btn-primary")
     button.textContent = "Fetch posts"
     button.addEventListener(
       "click",
       { (_: dom.MouseEvent) =>
         val showPosts = for {
           resp <- ZIO.fromFuture(implicit ec => fetchBackend.send(HttpClient.getPosts()))
-          _ <- Logging.log(LogLevel.Info)(s"$resp")
+          _ <- log.info(s"$resp")
           posts <- ZIO.fromEither(resp.body match {
             case _: DecodeResult.Failure => Left[Dto.Message, Seq[Dto.PostWithoutContent]](Message("failure"))
             case DecodeResult.Value(v)   => v
