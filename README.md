@@ -46,9 +46,7 @@ sbt crossJVM/stage
 ./jvm/target/universal/stage/bin/jvm
 ```
 
-Default username and password: `admin:123456`.
-
-Use `src/main/password.sc` to generate a new encoded password if you want to change the password in Mongodb manually.
+Open `http://localhost:8080` in web browser.
 
 ## Test
 
@@ -61,6 +59,15 @@ Publish coverage report to <https://coveralls.io/>.
 ```
 sbt coveralls
 ```
+
+## Auth
+
+Use jwt.
+
+Default username and password: `admin:123456`.
+
+Use `src/main/password.sc` to generate a new encoded password if you want to change the password in Mongodb manually.
+
 
 ## OpenApi
 
