@@ -7,20 +7,21 @@ import org.scalajs.dom.document
 import sttp.capabilities
 import sttp.client3._
 import sttp.tapir.DecodeResult
+import zio._
 import zio.clock.Clock
 import zio.console.Console
-import zio.{ZIO, ZLayer}
 import zio.logging._
 import zio.logging.js.ConsoleLogger
 
-import scala.concurrent.Future
-import java.time.ZoneId
 import java.util.TimeZone
+import scala.concurrent.Future
 
 object Main {
+
+  /** @note There is no other [[java.util.TimeZone]] in the web browser, such as Asia/Shanghai */
   TimeZone.setDefault(
     TimeZone.getTimeZone("UTC")
-  ) // Because there is no other timezone in the web browser, such as Asia/Shanghai
+  )
 
   val fetchBackend: SttpBackend[Future, capabilities.WebSockets] = FetchBackend()
 
@@ -54,7 +55,7 @@ object Main {
           })
           _ <- ZIO.effectTotal(appendPostsWithoutContent(ol, posts))
         } yield ()
-        zio.Runtime.default.unsafeRunAsync_(showPosts.provideCustomLayer(loggingEnv))
+        Runtime.default.unsafeRunAsync_(showPosts.provideCustomLayer(loggingEnv))
       }
     )
     document.body.appendChild(button)

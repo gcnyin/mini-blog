@@ -25,3 +25,4 @@ project/metals.sbt
 project/project/
 target/
 static/js/main.js
+node_modules/
