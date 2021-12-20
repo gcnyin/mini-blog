@@ -78,18 +78,21 @@ object Main {
   def appendPostWithoutContent(targetNode: dom.Node, post: PostWithoutContent): Unit = {
     val parNode = document.createElement("li")
     parNode.textContent = post.title
-    parNode.addEventListener("click", (_: dom.MouseEvent) => {
-      val showPosts = for {
-        resp <- ZIO.fromFuture(implicit ec => fetchBackend.send(HttpClient.getPost(post.id)))
-        _ <- log.info(s"$resp")
-        post <- ZIO.fromEither(resp.body match {
-          case _: DecodeResult.Failure => Left[Message, Post](Message("failure"))
-          case DecodeResult.Value(v)   => v
-        })
-        _ <- ZIO.effectTotal(showPost(postZone, post))
-      } yield ()
-      Runtime.default.unsafeRunAsync_(showPosts.provideCustomLayer(loggingEnv))
-    })
+    parNode.addEventListener(
+      "click",
+      (_: dom.MouseEvent) => {
+        val showPosts = for {
+          resp <- ZIO.fromFuture(implicit ec => fetchBackend.send(HttpClient.getPost(post.id)))
+          _ <- log.info(s"$resp")
+          post <- ZIO.fromEither(resp.body match {
+            case _: DecodeResult.Failure => Left[Message, Post](Message("failure"))
+            case DecodeResult.Value(v)   => v
+          })
+          _ <- ZIO.effectTotal(showPost(postZone, post))
+        } yield ()
+        Runtime.default.unsafeRunAsync_(showPosts.provideCustomLayer(loggingEnv))
+      }
+    )
     parNode.classList.add("list-group-item")
     targetNode.appendChild(parNode)
   }

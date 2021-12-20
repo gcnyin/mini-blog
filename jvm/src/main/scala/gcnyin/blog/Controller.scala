@@ -80,7 +80,7 @@ class Controller(serviceLogic: ServiceLogic) {
       createPostEndpoint,
       deletePostEndpoint,
       createTokenEndpoint,
-      updatePasswordEndpoint,
+      updatePasswordEndpoint
     )
 
   private val swaggerRoute: List[ServerEndpoint[Any, Future]] =

@@ -8,7 +8,6 @@ import sttp.tapir.generic.auto._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.model.UsernamePassword
 
-
 object TapirEndpoint {
   val messageBody: EndpointIO.Body[String, Message] =
     jsonBody[Message]
