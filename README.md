@@ -1,5 +1,6 @@
 # mini-blog
 
+[![Scala.js](https://www.scala-js.org/assets/badges/scalajs-1.8.0.svg)](https://www.scala-js.org)
 [![Coverage Status](https://coveralls.io/repos/github/gcnyin/mini-blog/badge.svg?branch=master)](https://coveralls.io/github/gcnyin/mini-blog?branch=master)
 
 Personal blog system powered by Akka, Tapir, Zio, Cats, Scala.js and MongoDB.
