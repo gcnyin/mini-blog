@@ -14,6 +14,7 @@ import zio.logging.js.ConsoleLogger
 
 import java.util.TimeZone
 import scala.concurrent.Future
+import java.time.Instant
 
 object Main {
 
@@ -42,59 +43,57 @@ object Main {
   }
 
   def setupUI(): Unit = {
-    val ul = document.createElement("ul")
-    ul.classList.add("list-group")
-
-    val button = document.createElement("button")
-    button.classList.add("btn")
-    button.classList.add("btn-primary")
-    button.textContent = "Fetch posts"
-    button.addEventListener(
-      "click",
-      (_: dom.MouseEvent) => {
-        val showPosts = for {
-          resp <- ZIO.fromFuture(implicit ec => fetchBackend.send(HttpClient.getPosts()))
-          _ <- log.info(s"$resp")
-          posts <- ZIO.fromEither(resp.body match {
-            case _: DecodeResult.Failure => Left[Message, Seq[PostWithoutContent]](Message("failure"))
-            case DecodeResult.Value(v)   => v
-          })
-          _ <- ZIO.effectTotal(appendPostsWithoutContent(ul, posts))
-        } yield ()
-        Runtime.default.unsafeRunAsync_(showPosts.provideCustomLayer(loggingEnv))
-      }
-    )
-    buttonZone.appendChild(button)
-    postsZone.appendChild(ul)
+    val postsTableBody = document.querySelector("#posts-table-body")
+    val showPosts = for {
+      resp <- ZIO.fromFuture(implicit ec => fetchBackend.send(HttpClient.getPosts()))
+      _ <- log.info(s"$resp")
+      posts <- ZIO.fromEither(resp.body match {
+        case _: DecodeResult.Failure => Left[Message, Seq[PostWithoutContent]](Message("failure"))
+        case DecodeResult.Value(v)   => v
+      })
+      _ <- ZIO.effectTotal(appendPostsWithoutContent(postsTableBody, posts))
+    } yield ()
+    Runtime.default.unsafeRunAsync_(showPosts.provideCustomLayer(loggingEnv))
   }
 
   def appendPostsWithoutContent(targetNode: dom.Node, posts: Seq[PostWithoutContent]): Unit = {
     targetNode.textContent = ""
-    for (p <- posts) {
-      appendPostWithoutContent(targetNode, p)
+    for ((p, i) <- posts.view.zipWithIndex) {
+      appendPostWithoutContent(targetNode, p, i)
     }
   }
 
-  def appendPostWithoutContent(targetNode: dom.Node, post: PostWithoutContent): Unit = {
-    val parNode = document.createElement("li")
-    parNode.textContent = post.title
-    parNode.addEventListener(
-      "click",
-      (_: dom.MouseEvent) => {
-        val showPosts = for {
-          resp <- ZIO.fromFuture(implicit ec => fetchBackend.send(HttpClient.getPost(post.id)))
-          _ <- log.info(s"$resp")
-          post <- ZIO.fromEither(resp.body match {
-            case _: DecodeResult.Failure => Left[Message, Post](Message("failure"))
-            case DecodeResult.Value(v)   => v
-          })
-          _ <- ZIO.effectTotal(showPost(postZone, post))
-        } yield ()
-        Runtime.default.unsafeRunAsync_(showPosts.provideCustomLayer(loggingEnv))
-      }
-    )
-    parNode.classList.add("list-group-item")
-    targetNode.appendChild(parNode)
+  def appendPostWithoutContent(targetNode: dom.Node, post: PostWithoutContent, index: Int): Unit = {
+    val tr = document.createElement("tr")
+    val th = document.createElement("th")
+    th.textContent = (index + 1).toString
+    val td1 = document.createElement("td")
+    td1.textContent = post.title
+    val td2 = document.createElement("td")
+    td2.textContent = Instant.ofEpochMilli(post.created).toString
+    val td3 = document.createElement("td")
+    td3.textContent = "Preview Edit Delete"
+    tr.appendChild(th)
+    tr.appendChild(td1)
+    tr.appendChild(td2)
+    tr.appendChild(td3)
+    targetNode.appendChild(tr)
+    // parNode.textContent = post.title
+    // parNode.addEventListener(
+    //   "click",
+    //   (_: dom.MouseEvent) => {
+    //     val showPosts = for {
+    //       resp <- ZIO.fromFuture(implicit ec => fetchBackend.send(HttpClient.getPost(post.id)))
+    //       _ <- log.info(s"$resp")
+    //       post <- ZIO.fromEither(resp.body match {
+    //         case _: DecodeResult.Failure => Left[Message, Post](Message("failure"))
+    //         case DecodeResult.Value(v)   => v
+    //       })
+    //       _ <- ZIO.effectTotal(showPost(postZone, post))
+    //     } yield ()
+    //     Runtime.default.unsafeRunAsync_(showPosts.provideCustomLayer(loggingEnv))
+    //   }
+    // )
   }
 
   def showPost(targetNode: dom.Node, post: Post): Unit = {
