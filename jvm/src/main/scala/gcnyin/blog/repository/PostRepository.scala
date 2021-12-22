@@ -2,8 +2,8 @@ package gcnyin.blog.repository
 
 import akka.actor.typed.ActorSystem
 import cats.data.EitherT
-import gcnyin.blog.Model._
-import gcnyin.blog.common.Dto.{Message, PostUpdateBody}
+import gcnyin.blog.Model.{PostPo, PostWithoutContentPo}
+import gcnyin.blog.common.Dto._
 import gcnyin.blog.database.MongoClient
 import reactivemongo.api.bson.{BSONObjectID, document}
 import reactivemongo.api.commands.WriteResult
@@ -11,9 +11,9 @@ import reactivemongo.api.commands.WriteResult
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
 trait PostRepository {
-  def getPostsWithoutContent: Future[Seq[PostWithoutContent]]
+  def getPostsWithoutContent: Future[Seq[PostWithoutContentPo]]
 
-  def getPostById(postId: String): Future[Either[Message, Post]]
+  def getPostById(postId: String): Future[Either[Message, PostPo]]
 
   def savePostWithoutCreated(post: PostWithoutCreated): Future[Either[Message, Message]]
 
@@ -29,16 +29,16 @@ object PostRepository {
     private val right: Either[Message, Message] =
       Right(Message("updated successfully"))
 
-    override def getPostsWithoutContent: Future[Seq[PostWithoutContent]] =
+    override def getPostsWithoutContent: Future[Seq[PostWithoutContentPo]] =
       for {
         coll <- mongoClient.postsCollectionFuture
         f <- coll
           .find(document())
-          .cursor[PostWithoutContent]()
+          .cursor[PostWithoutContentPo]()
           .collect[Vector]()
       } yield f
 
-    override def getPostById(postId: String): Future[Either[Message, Post]] = {
+    override def getPostById(postId: String): Future[Either[Message, PostPo]] = {
       for {
         coll <- EitherT.liftF(mongoClient.postsCollectionFuture)
         id <- EitherT.fromEither[Future](
@@ -50,7 +50,7 @@ object PostRepository {
         post <- EitherT(
           coll
             .find(document("_id" -> id))
-            .one[Post]
+            .one[PostPo]
             .map(_.toRight(Message(s"post $postId not found")))
         )
       } yield post

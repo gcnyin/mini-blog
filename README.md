@@ -32,11 +32,13 @@ Run the scripts in the `mongo-migration` directory in the MongoDB console.
 ## Build
 
 ```shell
+npm install
+
 sbt crossJS/fastLinkJS
 #or sbt crossJS/fullLinkJS
 
-cp js/target/scala-2.13/js-fastopt/main.js static/js
-#or cp js/target/scala-2.13/js-opt/main.js static/js
+ln -s js/target/scala-2.13/js-fastopt/main.js static/js/main.js
+#or ln -s js/target/scala-2.13/js-opt/main.js static/js/main.js
 
 sbt crossJVM/stage
 ```
@@ -49,17 +51,7 @@ sbt crossJVM/stage
 
 Open `http://localhost:8080` in web browser.
 
-## Test
-
-```
-sbt test coverageReport
-```
-
-Publish coverage report to <https://coveralls.io/>.
-
-```
-sbt coveralls
-```
+**Frontend is still WIP.
 
 ## Auth
 

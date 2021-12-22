@@ -3,8 +3,8 @@ package gcnyin.blog
 import akka.actor.typed.ActorSystem
 import cats.data.EitherT
 import cats.implicits._
-import gcnyin.blog.Model._
-import gcnyin.blog.common.Dto.{Message, PostUpdateBody}
+import gcnyin.blog.Model.{PostPo, PostWithoutContentPo}
+import gcnyin.blog.common.Dto._
 import gcnyin.blog.repository.{PostRepository, UserRepository}
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -21,7 +21,7 @@ class ServiceLogic(userRepository: UserRepository, postRepository: PostRepositor
   private val jwtComponent: JwtComponent = new JwtComponent(key, Instant.now)
 
   def getPostById(postId: String): Future[Either[Message, Post]] =
-    postRepository.getPostById(postId)
+    postRepository.getPostById(postId).map(_.map(Post tupled PostPo.unapply(_).get))
 
   def createToken(username: String): Future[Either[Message, Token]] =
     Future.successful(Right(Token(jwtComponent.createToken(username))))
@@ -41,7 +41,9 @@ class ServiceLogic(userRepository: UserRepository, postRepository: PostRepositor
 
   def getPostsWithoutContent: Future[Either[Message, Seq[PostWithoutContent]]] =
     postRepository.getPostsWithoutContent
-      .map(posts => Right(posts.sortBy(_.created).reverse))
+      .map(posts =>
+        Right(posts.map(PostWithoutContent tupled PostWithoutContentPo.unapply(_).get).sortBy(_.created).reverse)
+      )
 
   def savePostWithoutCreated(post: PostWithoutCreated): Future[Either[Message, Message]] =
     postRepository.savePostWithoutCreated(post)

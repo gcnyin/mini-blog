@@ -2,7 +2,7 @@ package gcnyin.blog
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import gcnyin.blog.TapirEndpoint._
+import gcnyin.blog.common.TapirEndpoint._
 import gcnyin.blog.common.Dto.Message
 import sttp.tapir._
 import sttp.tapir.server.ServerEndpoint

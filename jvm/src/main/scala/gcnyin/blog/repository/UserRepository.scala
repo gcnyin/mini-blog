@@ -2,8 +2,8 @@ package gcnyin.blog.repository
 
 import akka.actor.typed.ActorSystem
 import cats.data.EitherT
+import gcnyin.blog.common.Dto._
 import gcnyin.blog.Model._
-import gcnyin.blog.common.Dto.Message
 import gcnyin.blog.database.MongoClient
 import reactivemongo.api.bson.document
 
