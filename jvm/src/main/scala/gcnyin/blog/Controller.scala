@@ -1,9 +1,8 @@
 package gcnyin.blog
 
-import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import gcnyin.blog.common.TapirEndpoint._
 import gcnyin.blog.common.Dto.Message
+import gcnyin.blog.common.TapirEndpoint._
 import sttp.tapir._
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.server.akkahttp.{AkkaHttpServerInterpreter, AkkaHttpServerOptions}
@@ -65,11 +64,11 @@ class Controller(serviceLogic: ServiceLogic) {
     )
 
   private val home: Route = AkkaHttpServerInterpreter(serverOptions).toRoute(
-    filesGetServerEndpoint[Future]("")("static")
+    filesGetServerEndpoint[Future]("")("js")
   )
 
-  private val static: Route = AkkaHttpServerInterpreter(serverOptions).toRoute(
-    filesGetServerEndpoint[Future]("static")("static")
+  private val staticJs: Route = AkkaHttpServerInterpreter(serverOptions).toRoute(
+    filesGetServerEndpoint[Future]("js-fastopt")("js/js-fastopt")
   )
 
   private val apiList: List[AnyEndpoint] =
@@ -89,7 +88,9 @@ class Controller(serviceLogic: ServiceLogic) {
   private val openApi: Route =
     AkkaHttpServerInterpreter(serverOptions).toRoute(swaggerRoute)
 
+  import akka.http.scaladsl.server.Directives._
+
   val route: Route = encodeResponse {
-    openApi ~ posts ~ post ~ createPost ~ updatePost ~ deletePost ~ createToken ~ updateUserPassword ~ home ~ static
+    openApi ~ posts ~ post ~ createPost ~ updatePost ~ deletePost ~ createToken ~ updateUserPassword ~ home ~ staticJs
   }
 }

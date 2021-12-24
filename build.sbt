@@ -3,7 +3,7 @@ ThisBuild / version := "0.1"
 ThisBuild / organization := "com.github.gcnyin"
 ThisBuild / organizationName := "mini-blog"
 
-val tapirVersion = "0.19.1"
+val tapirVersion = "0.19.3"
 val akkaVersion = "2.6.17"
 val macwireVersion = "2.5.0"
 val zioVersion = "1.0.12"
@@ -63,19 +63,21 @@ lazy val cross = crossProject(JSPlatform, JVMPlatform)
       "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
       "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test
     ),
-    coverageEnabled := true
   )
   .jsSettings(
     name := "js",
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "2.0.0",
-      "com.softwaremill.sttp.tapir" %%% "tapir-sttp-client" % "0.19.1",
+      "com.softwaremill.sttp.tapir" %%% "tapir-sttp-client" % tapirVersion,
       "io.github.cquiroz" %%% "scala-java-time" % "2.2.0",
       "org.scala-js" %%% "scala-js-macrotask-executor" % "1.0.0",
       "dev.zio" %%% "zio-logging-jsconsole" % zioLoggingVersion,
     ),
     scalaJSUseMainModuleInitializer := true,
     jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv(),
+    crossPaths := false,
+    fastLinkJS / crossTarget := baseDirectory.value,
+    fullLinkJS / crossTarget := baseDirectory.value
   )
 
 val jvm = cross.jvm.enablePlugins(JavaAppPackaging)

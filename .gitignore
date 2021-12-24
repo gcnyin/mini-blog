@@ -26,3 +26,4 @@ project/project/
 target/
 static/js/main.js
 node_modules/
+js/js-fastopt/

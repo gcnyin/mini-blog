@@ -33,19 +33,13 @@ Run the scripts in the `mongo-migration` directory in the MongoDB console.
 
 ```shell
 npm install
-
 sbt crossJS/fastLinkJS
-#or sbt crossJS/fullLinkJS
-
-ln -s js/target/scala-2.13/js-fastopt/main.js static/js/main.js
-#or ln -s js/target/scala-2.13/js-opt/main.js static/js/main.js
-
 sbt crossJVM/stage
 ```
 
 ## Run
 
-```
+```shell
 ./jvm/target/universal/stage/bin/jvm
 ```
 
@@ -60,7 +54,6 @@ Use jwt.
 Default username and password: `admin:123456`.
 
 Use `src/main/password.sc` to generate a new encoded password if you want to change the password in Mongodb manually.
-
 
 ## OpenApi
 
