@@ -3,7 +3,7 @@
 [![Scala.js](https://www.scala-js.org/assets/badges/scalajs-1.8.0.svg)](https://www.scala-js.org)
 [![Coverage Status](https://coveralls.io/repos/github/gcnyin/mini-blog/badge.svg?branch=master)](https://coveralls.io/github/gcnyin/mini-blog?branch=master)
 
-Personal blog system powered by Akka, Tapir, Zio, Cats, Scala.js and MongoDB.
+Personal blog system powered by Akka, Tapir, Zio, Cats and MongoDB.
 
 ## Requirements
 
@@ -32,20 +32,17 @@ Run the scripts in the `mongo-migration` directory in the MongoDB console.
 ## Build
 
 ```shell
-npm install
-sbt crossJS/fastLinkJS
-sbt crossJVM/stage
+sbt stage
 ```
 
 ## Run
 
 ```shell
-./jvm/target/universal/stage/bin/jvm
 ```
 
 Open `http://localhost:8080` in web browser.
 
-**Frontend is still WIP.
+**Frontend is still WIP.**
 
 ## Auth
 

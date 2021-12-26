@@ -10,6 +10,10 @@ import sttp.tapir.server.interceptor.ValuedEndpointOutput
 import sttp.tapir.swagger.bundle.SwaggerInterpreter
 
 import scala.concurrent.Future
+import akka.http.scaladsl.model.HttpEntity
+import akka.http.scaladsl.model.ContentTypes
+import scala.util.Failure
+import scala.util.Success
 
 class Controller(serviceLogic: ServiceLogic) {
   private def failureResponse(msg: String): ValuedEndpointOutput[_] =
@@ -63,14 +67,6 @@ class Controller(serviceLogic: ServiceLogic) {
         .serverLogic(user => password => serviceLogic.updateUserPassword(user.username, password.password))
     )
 
-  private val home: Route = AkkaHttpServerInterpreter(serverOptions).toRoute(
-    filesGetServerEndpoint[Future]("")("js")
-  )
-
-  private val staticJs: Route = AkkaHttpServerInterpreter(serverOptions).toRoute(
-    filesGetServerEndpoint[Future]("js-fastopt")("js/js-fastopt")
-  )
-
   private val apiList: List[AnyEndpoint] =
     List(
       postsEndpoint,
@@ -90,7 +86,32 @@ class Controller(serviceLogic: ServiceLogic) {
 
   import akka.http.scaladsl.server.Directives._
 
+  private val home = path("") {
+    get {
+      onSuccess(serviceLogic.getPostsWithoutContent) {
+        case Left(e) =>
+          complete(HttpEntity(ContentTypes.`application/json`, s"""{"msg": ${e.msg}}"""))
+        case Right(posts) =>
+          import scalatags.Text.all._
+
+          val indexHtml = html(
+            head(
+              title := "Mini Blog"
+            ),
+            body(
+              h1("Mini Blog"),
+              ul(
+                for (p <- posts) yield li(p.title)
+              )
+            )
+          ).render
+
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, indexHtml))
+      }
+    }
+  }
+
   val route: Route = encodeResponse {
-    openApi ~ posts ~ post ~ createPost ~ updatePost ~ deletePost ~ createToken ~ updateUserPassword ~ home ~ staticJs
+    home ~ openApi ~ posts ~ post ~ createPost ~ updatePost ~ deletePost ~ createToken ~ updateUserPassword
   }
 }
