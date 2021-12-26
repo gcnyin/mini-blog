@@ -1,5 +1,6 @@
 package gcnyin.blog
 
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.Route
 import gcnyin.blog.common.Dto.Message
 import gcnyin.blog.common.TapirEndpoint._
@@ -10,10 +11,6 @@ import sttp.tapir.server.interceptor.ValuedEndpointOutput
 import sttp.tapir.swagger.bundle.SwaggerInterpreter
 
 import scala.concurrent.Future
-import akka.http.scaladsl.model.HttpEntity
-import akka.http.scaladsl.model.ContentTypes
-import scala.util.Failure
-import scala.util.Success
 
 class Controller(serviceLogic: ServiceLogic) {
   private def failureResponse(msg: String): ValuedEndpointOutput[_] =
@@ -86,32 +83,32 @@ class Controller(serviceLogic: ServiceLogic) {
 
   import akka.http.scaladsl.server.Directives._
 
-  private val home = path("") {
+  private val homePage = path("") {
     get {
       onSuccess(serviceLogic.getPostsWithoutContent) {
         case Left(e) =>
           complete(HttpEntity(ContentTypes.`application/json`, s"""{"msg": ${e.msg}}"""))
         case Right(posts) =>
-          import scalatags.Text.all._
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, HTMLEngine.getHomePage(posts).render))
+      }
+    }
+  }
 
-          val indexHtml = html(
-            head(
-              title := "Mini Blog"
-            ),
-            body(
-              h1("Mini Blog"),
-              ul(
-                for (p <- posts) yield li(p.title)
-              )
-            )
-          ).render
-
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, indexHtml))
+  private val postDetailPage = path("posts") {
+    get {
+      parameters("postId".as[String]) { postId =>
+        onSuccess(serviceLogic.getPostById(postId)) {
+          case Left(_) =>
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, HTMLEngine.get404Page))
+          case Right(post) =>
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, HTMLEngine.getPostDetailPage(post).render))
+        }
       }
     }
   }
 
   val route: Route = encodeResponse {
-    home ~ openApi ~ posts ~ post ~ createPost ~ updatePost ~ deletePost ~ createToken ~ updateUserPassword
+    homePage ~ postDetailPage ~ openApi ~ posts ~ post ~
+      createPost ~ updatePost ~ deletePost ~ createToken ~ updateUserPassword
   }
 }

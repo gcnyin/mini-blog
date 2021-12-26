@@ -39,6 +39,8 @@ lazy val root = (project in file("."))
       "com.github.jwt-scala" %% "jwt-circe" % "9.0.2",
       // database
       "org.reactivemongo" %% "reactivemongo" % "1.0.10",
+      // xml
+      "org.scala-lang.modules" %% "scala-xml" % "2.0.1",
       // logging
       "ch.qos.logback" % "logback-classic" % "1.2.10",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
