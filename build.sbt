@@ -54,6 +54,7 @@ lazy val root = (project in file("."))
     ),
     scalacOptions ++= Seq(
       "-deprecation"
-    )
+    ),
+    coverageEnabled := true
   )
   .enablePlugins(JavaAppPackaging)

@@ -38,6 +38,7 @@ sbt stage
 ## Run
 
 ```shell
+./target/universal/stage/bin/mini-blog
 ```
 
 Open `http://localhost:8080` in web browser.
