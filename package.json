@@ -1,8 +1,0 @@
-{
-  "private": true,
-  "version": "0.1.0",
-  "dependencies": {
-    "jsdom": "^19.0.0"
-  },
-  "scripts": {}
-}
