@@ -5,23 +5,26 @@ import scalatags.Text
 import scalatags.Text.all._
 
 object HTMLEngine {
-  def get404Page: String =
+  val get404Page: String =
     <html>
       <head>
-        <title>404 | Mini Blog</title>
+        <title>404 Not Found</title>
       </head>
       <body>
-        <p>Resource not found</p>
+        <center>
+          <h1>404 Not Found</h1>
+        </center>
+        <hr/>
+        <center>akka-http/10.2.7</center>
       </body>
     </html>.toString
 
   def getHomePage(posts: Seq[PostWithoutContent]): Text.TypedTag[String] =
     html(cls := "h-100")(
-      getNav,
       getHeader("Home"),
       body(cls := "d-flex flex-column h-100")(
+        getNav,
         tag("main")(cls := "flex-shrink-0 container")(
-          h1("Mini Blog"),
           for (post <- posts)
             yield p(
               a(href := s"/posts?postId=${post.id}")(post.title)
@@ -33,9 +36,9 @@ object HTMLEngine {
 
   def getPostDetailPage(post: Post): Text.TypedTag[String] =
     html(cls := "h-100")(
-      getNav,
       getHeader(post.title),
       body(cls := "d-flex flex-column h-100")(
+        getNav,
         tag("main")(cls := "flex-shrink-0 container")(
           h1(post.title),
           for (pa <- post.content.split("\n")) yield p(pa)

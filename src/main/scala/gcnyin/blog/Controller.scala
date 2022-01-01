@@ -87,7 +87,7 @@ class Controller(serviceLogic: ServiceLogic) {
     get {
       onSuccess(serviceLogic.getPostsWithoutContent) {
         case Left(e) =>
-          complete(HttpEntity(ContentTypes.`application/json`, s"""{"msg": ${e.msg}}"""))
+          complete(500, HttpEntity(ContentTypes.`application/json`, s"""{"msg": ${e.msg}}"""))
         case Right(posts) =>
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, HTMLEngine.getHomePage(posts).render))
       }
@@ -99,7 +99,7 @@ class Controller(serviceLogic: ServiceLogic) {
       parameters("postId".as[String]) { postId =>
         onSuccess(serviceLogic.getPostById(postId)) {
           case Left(_) =>
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, HTMLEngine.get404Page))
+            complete(404, HttpEntity(ContentTypes.`text/html(UTF-8)`, HTMLEngine.get404Page))
           case Right(post) =>
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, HTMLEngine.getPostDetailPage(post).render))
         }
@@ -107,8 +107,12 @@ class Controller(serviceLogic: ServiceLogic) {
     }
   }
 
+  private val defaultRoute: Route = get {
+    complete(404, HttpEntity(ContentTypes.`text/html(UTF-8)`, HTMLEngine.get404Page))
+  }
+
   val route: Route = encodeResponse {
-    homePage ~ postDetailPage ~ openApi ~ posts ~ post ~
-      createPost ~ updatePost ~ deletePost ~ createToken ~ updateUserPassword
+    homePage ~ postDetailPage ~ openApi ~ posts ~ post ~ createPost ~ updatePost ~ deletePost ~ createToken ~
+      updateUserPassword ~ defaultRoute
   }
 }
