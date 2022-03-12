@@ -33,7 +33,7 @@ object PostEventSourceBehavior {
           case CreatePostCommand(title, content, replyTo) =>
             Effect
               .persist(CreatePostEvent(UUID.randomUUID().toString, title, content))
-              .thenReply(replyTo)(_ => StatusReply.success(Right()))
+              .thenReply(replyTo)(_ => StatusReply.success(Right(())))
           case GetPostByPostIdQuery(postId, replyTo) =>
             Effect.reply(replyTo)(
               StatusReply.success(state.posts.get(postId).toRight(Message(s"post not found: $postId")))
