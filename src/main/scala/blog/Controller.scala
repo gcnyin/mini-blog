@@ -15,7 +15,12 @@ class Controller(postService: PostService) {
       TapirEndpoint.getPostByIdEndpoint.serverLogic(r => postService.getPostByPostId(r))
     )
 
+  private val getPostsRoute: Route =
+    AkkaHttpServerInterpreter().toRoute(
+      TapirEndpoint.getPostsEndpoint.serverLogic(_ => postService.getPosts)
+    )
+
   val route: Route = encodeResponse {
-    createPostRoute ~ getPostByIdRoute
+    createPostRoute ~ getPostByIdRoute ~ getPostsRoute
   }
 }

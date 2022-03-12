@@ -22,7 +22,7 @@ object Main {
     implicit val ec: ExecutionContextExecutor = ctx.executionContext
 
     val postEventSourceActorRef: ActorRef[PostEventSourceBehavior.Command] =
-      ctx.spawn(PostEventSourceBehavior.apply(), "post-event-source-actor")
+      ctx.spawn(PostEventSourceBehavior(), "post-event-source-actor")
     val postService = new PostService(postEventSourceActorRef)
     val controller = new Controller(postService)
 

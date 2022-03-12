@@ -18,6 +18,7 @@ object PostEventSourceBehavior {
       postId: String,
       replyTo: ActorRef[StatusReply[Either[Message, Entity.Post]]]
   ) extends Command
+  final case class GetPosts(replyTo: ActorRef[StatusReply[Either[Message, Seq[Entity.Post]]]]) extends Command
 
   sealed trait Event extends JsonSerializable
   final case class CreatePostEvent(id: String, title: String, content: String) extends Event
@@ -38,6 +39,8 @@ object PostEventSourceBehavior {
             Effect.reply(replyTo)(
               StatusReply.success(state.posts.get(postId).toRight(Message(s"post not found: $postId")))
             )
+          case GetPosts(replyTo) =>
+            Effect.reply(replyTo)(StatusReply.success(Right(state.posts.values.toSeq)))
         }
       },
       eventHandler = (state, event) => {
