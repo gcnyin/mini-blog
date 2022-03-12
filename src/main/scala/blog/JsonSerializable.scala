@@ -1,0 +1,3 @@
+package blog
+
+trait JsonSerializable
