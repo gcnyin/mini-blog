@@ -16,15 +16,14 @@ class PostService(postEventSourceActorRef: ActorRef[PostEventSourceBehavior.Comm
   def createPost(title: String, content: String): Future[Either[Message, Unit]] =
     postEventSourceActorRef
       .ask(replyTo => PostEventSourceBehavior.CreatePostCommand(title, content, replyTo))
-      .map(_.getValue)
 
   def getPostByPostId(postId: String): Future[Either[Message, Response.Post]] =
     postEventSourceActorRef
       .ask(replyTo => PostEventSourceBehavior.GetPostByPostIdQuery(postId, replyTo))
-      .map(_.getValue.map(p => Response.Post(p.id, p.title, p.content)))
+      .map(_.map(p => Response.Post(p.id, p.title, p.content)))
 
   def getPosts: Future[Either[Message, Seq[Response.PostTitle]]] =
     postEventSourceActorRef
       .ask(replyTo => PostEventSourceBehavior.GetPosts(replyTo))
-      .map(_.getValue.map(l => l.map(p => Response.PostTitle(p.id, p.title))))
+      .map(_.map(l => l.map(p => Response.PostTitle(p.id, p.title))))
 }
