@@ -2,7 +2,7 @@
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>[%date] [%level] [%logger] [%thread] [%X{akkaSource}] %msg%n</pattern>
+            <pattern>[%date] [%level] [%logger] [%thread] [%X{trace_id}] [%X{span_id}] [%X{trace_flags}] [%X{akkaSource}] %msg%n</pattern>
         </encoder>
     </appender>
 
