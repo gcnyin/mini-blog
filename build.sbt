@@ -34,4 +34,7 @@ lazy val root = (project in file("."))
       "-deprecation"
     )
   )
-  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(JavaAppPackaging, JavaAgent)
+  .settings(
+    javaAgents += "io.opentelemetry.javaagent" % "opentelemetry-javaagent" % "1.12.0"
+  )
