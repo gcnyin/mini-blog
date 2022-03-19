@@ -30,11 +30,13 @@ lazy val root = (project in file("."))
       "ch.qos.logback" % "logback-classic" % "1.2.11",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
     ),
+    javaAgents += "io.opentelemetry.javaagent" % "opentelemetry-javaagent" % "1.12.0",
     scalacOptions ++= Seq(
       "-deprecation"
-    )
+    ),
+    Docker / packageName := "mini-blog",
+    dockerBaseImage := "openjdk:15",
+    dockerExposedPorts ++= Seq(8080),
+    dockerUpdateLatest := true,
   )
   .enablePlugins(JavaAppPackaging, JavaAgent)
-  .settings(
-    javaAgents += "io.opentelemetry.javaagent" % "opentelemetry-javaagent" % "1.12.0"
-  )

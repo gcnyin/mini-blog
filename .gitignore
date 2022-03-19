@@ -12,3 +12,4 @@
 **/logs/
 **/node_modules/
 **/js-test-fastopt/
+application-prod.conf

@@ -13,6 +13,11 @@ object TapirEndpoint {
 
   private val basicEndpoint: Endpoint[Unit, Unit, Message, Unit, Any] = endpoint.in("api").errorOut(messageBody)
 
+  val healthCheckEndpoint: Endpoint[Unit, Unit, Unit, Unit, Any] =
+    endpoint
+      .in("health-check")
+      .get
+
   val createPostEndpoint: Endpoint[Unit, Request.CreatePost, Message, Unit, Any] =
     basicEndpoint
       .in("posts")
@@ -28,8 +33,8 @@ object TapirEndpoint {
 
   val getPostsEndpoint: Endpoint[Unit, Unit, Message, Seq[Response.PostTitle], Any] =
     basicEndpoint
-    .in("posts")
-    .description("list all posts")
-    .get
-    .out(postsWithTitleBody)
+      .in("posts")
+      .description("list all posts")
+      .get
+      .out(postsWithTitleBody)
 }
