@@ -41,7 +41,15 @@ spec:
             - name: OTEL_EXPORTER_JAEGER_ENDPOINT
               value: http://jaeger-instance-collector.gcnyin.svc.cluster.local:14250
             - name: JAVA_OPTS
-              value: "-Xmx1024M -Dconfig.resource=application-prod.conf"
+              value: "-XX:+UseContainerSupport"
+            - name: DB_HOST
+              value: postgres-loadbalancer.gcnyin.svc.cluster.local
+            - name: DB_URL
+              value: jdbc:postgresql://postgres-loadbalancer.gcnyin.svc.cluster.local:5432/hello_world
+            - name: DB_USER
+              value: admin
+            - name: DB_PASSWORD
+              value: 0s5h3E3O
           ports:
             - containerPort: 8080
               name: http
@@ -50,19 +58,19 @@ spec:
               path: /health-check
               port: http
             periodSeconds: 5
-            initialDelaySeconds: 10
+            initialDelaySeconds: 5
           livenessProbe:
             httpGet:
               path: /health-check
               port: http
             periodSeconds: 5
-            initialDelaySeconds: 10
+            initialDelaySeconds: 5
           startupProbe:
             httpGet:
               path: /health-check
               port: http
             periodSeconds: 5
-            initialDelaySeconds: 10
+            initialDelaySeconds: 5
           resources:
             limits:
               cpu: 1000m

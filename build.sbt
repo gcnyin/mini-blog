@@ -24,8 +24,8 @@ lazy val root = (project in file("."))
       "com.lightbend.akka" %% "akka-persistence-jdbc" % "5.0.4",
       "com.typesafe.slick" %% "slick" % "3.3.3",
       "com.typesafe.slick" %% "slick-hikaricp" % "3.3.3",
-      // mysql
-      "mysql" % "mysql-connector-java" % "8.0.26",
+      // database
+      "org.postgresql" % "postgresql" % "42.3.3",
       // logging
       "ch.qos.logback" % "logback-classic" % "1.2.11",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
