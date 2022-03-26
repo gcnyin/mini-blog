@@ -29,7 +29,12 @@ class Controller(postService: PostService) {
       TapirEndpoint.getPostsEndpoint.serverLogic(_ => postService.getPosts)
     )
 
+  private val deletePostRoute: Route =
+    AkkaHttpServerInterpreter().toRoute(
+      TapirEndpoint.deletePostEndpoint.serverLogic(postId => postService.deletePost(postId))
+    )
+
   val route: Route = encodeResponse {
-    healthCheckRoute ~ createPostRoute ~ getPostByIdRoute ~ getPostsRoute
+    healthCheckRoute ~ createPostRoute ~ getPostByIdRoute ~ getPostsRoute ~ deletePostRoute
   }
 }

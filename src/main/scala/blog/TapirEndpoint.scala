@@ -37,4 +37,10 @@ object TapirEndpoint {
       .description("list all posts")
       .get
       .out(postsWithTitleBody)
+
+  val deletePostEndpoint: Endpoint[Unit, String, Message, Unit, Any] =
+    basicEndpoint
+      .in("posts" / path[String]("postId"))
+      .description("delete post")
+      .delete
 }
