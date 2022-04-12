@@ -19,7 +19,7 @@ object CreatePersistenceTable {
 
     done.onComplete {
       case Failure(exception) => println(exception)
-      case Success(_)     => system.terminate()
+      case Success(_)         => system.terminate()
     }
   }
 }

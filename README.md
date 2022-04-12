@@ -2,6 +2,12 @@
 
 Blog system powered by scala/akka.
 
+## Setup development environment
+
+```
+docker-compose up -d
+```
+
 ## Deploy to k8s
 
 ```shell
@@ -12,3 +18,7 @@ kubectl apply -f src/main/resources/k8s/jaeger-instance.yml # create jaeger inst
 kubectl apply -f src/main/resources/k8s/postgres.yml # deploy postgres database
 kubectl apply -f src/main/resources/k8s/application.yml # deploy application
 ```
+
+## OpenAPI
+
+http://localhost:8080/docs/index.html?url=/docs/docs.yaml

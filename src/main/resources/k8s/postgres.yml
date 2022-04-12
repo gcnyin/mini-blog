@@ -40,7 +40,7 @@ spec:
             - name: POSTGRES_PASSWORD
               value: 0s5h3E3O
             - name: POSTGRES_DB
-              value: hello_world
+              value: mini_blog
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
   volumeClaimTemplates:
